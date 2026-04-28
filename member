@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PISCOK PAY | Member Area</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --card-bg: #1e1e1e;
+      --primary-orange: #ff6b00;
+      --text-white: #ffffff;
+      --text-gray: #b0b0b0;
+      --success: #00ff88;
+      --danger: #ff4444;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container { width: 100%; max-width: 450px; }
+
+    /* Login Section */
+    #loginSection {
+      margin-top: 60px;
+      text-align: center;
+      padding: 30px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      border: 1px solid #333;
+    }
+
+    /* Dashboard Section */
+    #dashboardSection { display: none; animation: fadeIn 0.5s ease; }
+
+    .card-saldo {
+      background: linear-gradient(135deg, #ff6b00 0%, #ff9e00 100%);
+      padding: 30px;
+      border-radius: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 15px 30px rgba(255, 107, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .saldo-label { font-size: 13px; font-weight: 600; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+    .saldo-value { font-size: 36px; font-weight: 700; margin: 10px 0; }
+    
+    .member-info { border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; margin-top: 15px; }
+    .val-nama { font-size: 18px; font-weight: 600; display: block; }
+    .val-id { font-size: 12px; opacity: 0.7; font-family: monospace; }
+
+    .action-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid #333;
+      margin-bottom: 20px;
+    }
+
+    h3 { font-size: 16px; margin: 0 0 15px 0; color: var(--primary-orange); display: flex; align-items: center; gap: 8px; }
+
+    input {
+      background: #2a2a2a; border: 1px solid #444; color: white;
+      padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box;
+      margin-bottom: 15px; font-size: 16px; outline: none; transition: 0.3s;
+    }
+    input:focus { border-color: var(--primary-orange); }
+
+    .btn-pay {
+      background: var(--success); color: #052e16; border: none;
+      padding: 16px; border-radius: 12px; width: 100%; font-weight: 700;
+      cursor: pointer; font-size: 15px; transition: 0.3s;
+    }
+
+    /* History */
+    .history-card { background: var(--card-bg); border-radius: 20px; padding: 10px 20px; border: 1px solid #333; }
+    .log-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 0; border-bottom: 1px solid #333;
+    }
+    .log-item:last-child { border: none; }
+    .log-info .ket { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+    .log-info .tgl { font-size: 11px; color: var(--text-gray); }
+    .nominal { font-weight: 700; font-size: 14px; }
+    .plus { color: var(--success); }
+    .minus { color: var(--danger); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div id="loginSection">
+    <h1 style="color: var(--primary-orange); margin-bottom: 0;">PLALANGAN.NET</h1>
+    <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 30px;">Digital Billing Member</p>
+    <input type="text" id="memberId" placeholder="Masukkan ID Member">
+    <button class="btn-pay" style="background: var(--primary-orange); color: white;" onclick="loginMember()">MASUK DASHBOARD</button>
+  </div>
+
+  <div id="dashboardSection">
+    <div class="card-saldo">
+      <div class="saldo-label">Saldo Deposit</div>
+      <div id="dispSaldo" class="saldo-value">Rp 0</div>
+      
+      <div class="member-info">
+        <span id="dispNama" class="val-nama">Memuat Nama...</span>
+        <span class="val-id">ID: <span id="dispId">---</span></span>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <h3>💸 Bayar Tagihan Wifi</h3>
+      <input type="number" id="payNominal" placeholder="Masukkan Nominal">
+      <button id="btnPay" class="btn-pay" onclick="prosesBayar()">KONFIRMASI BAYAR</button>
+    </div>
+
+    <h4 style="margin: 0 0 15px 10px; font-size: 14px; color: var(--text-gray);">Riwayat Transaksi</h4>
+    <div class="history-card" id="listHistory">
+      </div>
+
+    <button onclick="logout()" style="background:transparent; color: var(--danger); border: none; width: 100%; margin: 30px 0; cursor: pointer; font-size: 13px;">Ganti Akun / Logout</button>
+  </div>
+
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwVa_knGbxotfR5NjPtcjlksrsJ8dKXcZjs5CZRQpoBdSpuI6XDg2esDctvFx2_-xHCAw/exec"; // Ganti dengan link Web App GAS kamu
+
+  window.onload = function() {
+    const savedId = localStorage.getItem('piscokId');
+    if (savedId) {
+      document.getElementById('memberId').value = savedId;
+      loginMember();
+    }
+  };
+
+  async function loginMember() {
+    const id = document.getElementById('memberId').value;
+    if (!id) return alert("ID harus diisi");
+
+    // Simulasi Fetch ke GAS
+    // Nanti di backend GAS, buat fungsi untuk menangani action: 'GET_DATA'
+    try {
+      const resp = await fetch(`${API_URL}?action=GET_DATA&id=${id}`);
+      const res = await resp.json();
+
+      if (res.success) {
+        localStorage.setItem('piscokId', id);
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        
+        document.getElementById('dispNama').innerText = res.data.nama;
+        document.getElementById('dispId').innerText = id.toUpperCase();
+        document.getElementById('dispSaldo').innerText = "Rp " + res.data.saldo.toLocaleString();
+        
+        renderLogs(res.logs);
+      } else {
+        alert("ID Member tidak terdaftar!");
+      }
+    } catch (e) {
+      alert("Gagal memuat data. Periksa koneksi atau URL API.");
+    }
+  }
+
+  function renderLogs(logs) {
+    let html = "";
+    logs.forEach(log => {
+      const isPlus = log.tipe === "TOPUP";
+      html += `
+        <div class="log-item">
+          <div class="log-info">
+            <div class="ket">${log.ket}</div>
+            <div class="tgl">${log.tgl}</div>
+          </div>
+          <div class="nominal ${isPlus ? 'plus' : 'minus'}">
+            ${isPlus ? '+' : '-'} Rp ${log.nominal.toLocaleString()}
+          </div>
+        </div>`;
+    });
+    document.getElementById('listHistory').innerHTML = html || "<p style='text-align:center;color:#666;font-size:12px;'>Belum ada aktivitas</p>";
+  }
+
+  async function prosesBayar() {
+    const id = localStorage.getItem('piscokId');
+    const nominal = document.getElementById('payNominal').value;
+    const btn = document.getElementById('btnPay');
+
+    if (!nominal || nominal <= 0) return alert("Nominal tidak valid");
+    if (!confirm(`Konfirmasi pembayaran Rp ${parseInt(nominal).toLocaleString()}?`)) return;
+
+    btn.disabled = true;
+    btn.innerText = "Memproses...";
+
+    try {
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "Bayar Wifi Mandiri" })
+      });
+      
+      alert("Instruksi pembayaran dikirim! Halaman akan dimuat ulang.");
+      location.reload();
+    } catch (e) {
+      alert("Terjadi kesalahan.");
+      btn.disabled = false;
+      btn.innerText = "KONFIRMASI BAYAR";
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('piscokId');
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
