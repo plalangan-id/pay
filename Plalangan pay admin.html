@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLALANGAN.NET | ADMIN MASTER</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f0f0f;
+      --card-bg: #1a1a1a;
+      --primary-orange: #ff6b00;
+      --text-white: #ffffff;
+      --text-gray: #a0a0a0;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --blue: #3498db;
+    }
+
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    
+    header { margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    h1 { color: var(--primary-orange); margin: 0; font-size: 22px; }
+    .refresh-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .card-stat { background: var(--card-bg); padding: 20px; border-radius: 12px; border-bottom: 4px solid #333; }
+    .card-stat.pemasukan-hari { border-color: var(--green); }
+    .card-stat.pemasukan-bulan { border-color: var(--blue); }
+    .card-stat.total-deposit { border-color: var(--primary-orange); }
+    
+    .stat-label { font-size: 10px; text-transform: uppercase; color: var(--text-gray); letter-spacing: 1px; }
+    .stat-value { font-size: 22px; font-weight: 700; margin-top: 5px; }
+
+    /* Bento Grid */
+    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid #333; }
+    h3 { margin-top: 0; font-size: 18px; margin-bottom: 15px; }
+    label { display: block; margin-bottom: 8px; color: var(--text-gray); font-size: 11px; text-transform: uppercase; }
+
+    input { 
+      background: #252525; border: 1px solid #444; color: white; padding: 12px; 
+      border-radius: 8px; width: 100%; outline: none; margin-bottom: 10px; box-sizing: border-box;
+    }
+    input:focus { border-color: var(--primary-orange); }
+
+    button.btn-action { 
+      color: white; border: none; padding: 14px; border-radius: 8px; 
+      cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s;
+    }
+    .btn-topup { background: var(--green); }
+    .btn-potong { background: var(--red); }
+    button:disabled { opacity: 0.5; }
+
+    /* Table Style */
+    .table-container { margin-top: 25px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 12px; color: var(--text-gray); border-bottom: 2px solid #333; font-size: 11px; }
+    td { padding: 12px; border-bottom: 1px solid #222; }
+    .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .badge-topup { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .badge-potong { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+    .status-msg { margin-top: 15px; font-size: 13px; padding: 12px; border-radius: 8px; display: none; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>PLALANGAN.NET <span style="font-weight: 400; color: #666; font-size: 14px;">| ADMIN MASTER</span></h1>
+    <button class="refresh-btn" onclick="loadStats()">🔄 Refresh Data</button>
+  </header>
+
+  <div class="stats-grid">
+    <div class="card-stat pemasukan-hari">
+      <div class="stat-label">Pemasukan Hari Ini (Net)</div>
+      <div class="stat-value" id="statHariIni">Rp 0</div>
+    </div>
+    <div class="card-stat pemasukan-bulan">
+      <div class="stat-label">Pemasukan Bulan Ini</div>
+      <div class="stat-value" id="statBulanIni">Rp 0</div>
+    </div>
+    <div class="card-stat total-deposit">
+      <div class="stat-label">Total Saldo Member (Titipan)</div>
+      <div class="stat-value" id="statDeposit">Rp 0</div>
+    </div>
+  </div>
+
+  <div class="bento-grid">
+    <div class="card">
+      <h3>➕ Top Up / Deposit</h3>
+      <label>Tambah saldo titipan member</label>
+      <input type="text" id="topupId" placeholder="ID Member (IDMxxx)">
+      <input type="number" id="topupNominal" placeholder="Nominal Rp">
+      <button id="btnTopUp" class="btn-action btn-topup" onclick="kirimData('TOPUP')">PROSES DEPOSIT</button>
+      <div id="msgTopUp" class="status-msg"></div>
+    </div>
+
+    <div class="card">
+      <h3>➖ Potong / Bayar Wifi</h3>
+      <label>Penagihan manual atau bayar tunai</label>
+      <input type="text" id="potongId" placeholder="ID Member">
+      <input type="number" id="potongNominal" placeholder="Nominal Rp">
+      <input type="text" id="potongKet" placeholder="Keterangan (Bayar Wifi/Denda)">
+      <button id="btnPotong" class="btn-action btn-potong" onclick="kirimData('POTONG')">EKSEKUSI PEMBAYARAN</button>
+      <div id="msgPotong" class="status-msg"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 25px;">
+    <h3>📜 Riwayat Transaksi Terbaru (Global)</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>WAKTU</th>
+            <th>ID MEMBER</th>
+            <th>TIPE</th>
+            <th>NOMINAL</th>
+            <th>KETERANGAN</th>
+          </tr>
+        </thead>
+        <tbody id="logTableBody">
+          <tr><td colspan="5" style="text-align:center; padding:20px; color:#555;">Memuat riwayat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // GANTI DENGAN URL WEB APP GOOGLE SCRIPT KAMU
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwVa_knGbxotfR5NjPtcjlksrsJ8dKXcZjs5CZRQpoBdSpuI6XDg2esDctvFx2_-xHCAw/exec";
+
+  window.onload = loadStats;
+
+  async function loadStats() {
+    try {
+      const response = await fetch(`${WEB_APP_URL}?action=GET_STATS`);
+      const res = await response.json();
+      if (res.success) {
+        document.getElementById('statHariIni').innerText = "Rp " + res.totalHariIni.toLocaleString();
+        document.getElementById('statBulanIni').innerText = "Rp " + res.totalBulanIni.toLocaleString();
+        document.getElementById('statDeposit').innerText = "Rp " + res.totalDeposit.toLocaleString();
+        
+        // Update Tabel Riwayat
+        const tableBody = document.getElementById('logTableBody');
+        tableBody.innerHTML = '';
+        res.globalLogs.forEach(log => {
+          const row = `
+            <tr>
+              <td style="color: #666;">${log.tgl}</td>
+              <td style="font-weight: 700;">${log.id}</td>
+              <td><span class="badge ${log.tipe === 'TOPUP' ? 'badge-topup' : 'badge-potong'}">${log.tipe}</span></td>
+              <td style="font-weight: 600; color: ${log.tipe === 'TOPUP' ? '#2ecc71' : '#e74c3c'}">
+                ${log.tipe === 'TOPUP' ? '+' : '-'} Rp ${log.nominal.toLocaleString()}
+              </td>
+              <td style="color: #888;">${log.ket}</td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        });
+      }
+    } catch (e) { console.error("Gagal memuat data stats."); }
+  }
+
+  async function kirimData(tipe) {
+    const id = tipe === 'TOPUP' ? document.getElementById('topupId').value : document.getElementById('potongId').value;
+    const nominal = tipe === 'TOPUP' ? document.getElementById('topupNominal').value : document.getElementById('potongNominal').value;
+    const ket = tipe === 'TOPUP' ? 'Deposit Admin' : document.getElementById('potongKet').value;
+    const msgBox = tipe === 'TOPUP' ? document.getElementById('msgTopUp') : document.getElementById('msgPotong');
+    const btn = tipe === 'TOPUP' ? document.getElementById('btnTopUp') : document.getElementById('btnPotong');
+
+    if (!id || !nominal) return alert("Lengkapi data transaksi!");
+
+    btn.disabled = true;
+    msgBox.style.display = 'block';
+    msgBox.style.backgroundColor = '#222';
+    msgBox.innerHTML = "⌛ Sedang memproses ke server...";
+
+    try {
+      // POST data ke Google Script
+      await fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({ action: tipe, idMember: id, nominal: parseInt(nominal), keterangan: ket })
+      });
+
+      msgBox.innerHTML = "✅ Berhasil Diperbarui!";
+      msgBox.style.backgroundColor = tipe === 'TOPUP' ? '#064e3b' : '#7f1d1d';
+      
+      // Bersihkan input dan refresh data setelah 2 detik
+      setTimeout(() => {
+        if(tipe === 'TOPUP') { document.getElementById('topupNominal').value = ""; }
+        else { document.getElementById('potongNominal').value = ""; document.getElementById('potongKet').value = ""; }
+        msgBox.style.display = 'none';
+        loadStats(); // Update angka dan tabel tanpa reload halaman penuh
+      }, 2000);
+
+    } catch (e) {
+      msgBox.innerHTML = "❌ Gagal koneksi ke server.";
+      msgBox.style.backgroundColor = "#ff4444";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
