@@ -19,11 +19,9 @@
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
     .container { max-width: 450px; margin: 0 auto; }
     
-    /* Header Area */
     .header { text-align: left; margin-bottom: 25px; padding: 10px 5px; }
     .header h1 { font-family: 'JetBrains Mono', monospace; color: var(--primary-orange); margin: 0; font-size: 22px; letter-spacing: -1px; }
 
-    /* Kartu Saldo (Kotak Oren Tegas) */
     .balance-card {
       background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 100%);
       padding: 25px; border-radius: 20px; position: relative; overflow: hidden;
@@ -36,7 +34,6 @@
       text-align: right; color: white;
     }
 
-    /* Info List */
     .info-list { margin-top: 25px; display: grid; gap: 12px; }
     .info-item { 
       background: var(--card-bg); padding: 15px; border-radius: 15px; 
@@ -46,7 +43,6 @@
     .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
     .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-white); }
 
-    /* Login Box */
     .login-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 50px; text-align: center; }
     input { 
       width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; 
@@ -56,6 +52,13 @@
       width: 100%; padding: 15px; background: var(--primary-orange); color: white; 
       border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; letter-spacing: 1px;
     }
+    
+    /* Style Tombol Bayar Wifi */
+    .btn-action {
+      background: white; color: var(--primary-orange); margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid white;
+    }
+    .btn-action:disabled { background: #666; color: #999; border-color: #666; }
   </style>
 </head>
 <body>
@@ -90,6 +93,10 @@
       <div class="label-tegas" style="color: rgba(255,255,255,0.9);">Saldo Deposit</div>
       <div id="userSaldo" style="font-size: 42px; font-weight: 800; color: white;">Rp 0</div>
     </div>
+
+    <button id="btnBayar" class="btn-action" onclick="konfirmasiBayar()">
+      ⚡ BAYAR WIFI SEKARANG
+    </button>
   </div>
 
   <div class="info-list">
@@ -107,59 +114,101 @@
 </div>
 
 <script>
-  // Script logika tetap sama seperti sebelumnya, tinggal sesuaikan WEB_APP_URL kamu
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAI1kCnsU38M0VN0-ZB0O5xDYHmmorGkGuqLBotaf-1YT3M4_94CdqI6pm-soEYO5u1g/exec";
 
-async function loginMember() {
-  const id = document.getElementById('memberId').value.toUpperCase();
-  if(!id) return alert("ID Kosong!");
-  
-  document.querySelector('button').innerText = "MENYAMBUNGKAN...";
+  // Fungsi Pembersihan Tanggal
+  const bersihkanTgl = (tglMentah) => {
+    if (!tglMentah || tglMentah === "---") return "---";
+    const d = new Date(tglMentah);
+    if (!isNaN(d.getTime())) {
+      const tgl = String(d.getDate()).padStart(2, '0');
+      const bln = String(d.getMonth() + 1).padStart(2, '0');
+      const thn = d.getFullYear();
+      return `${tgl}/${bln}/${thn}`;
+    }
+    return tglMentah;
+  };
 
-  try {
-    const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
-    const res = await response.json();
+  async function loginMember() {
+    const id = document.getElementById('memberId').value.toUpperCase();
+    if(!id) return alert("ID Kosong!");
+    document.querySelector('button').innerText = "MENYAMBUNGKAN...";
 
-    if(res.success) {
-      document.getElementById('loginArea').style.display = 'none';
-      document.getElementById('dashboardArea').style.display = 'block';
-      
-      // FUNGSI PEMBERSIH TANGGAL (Penyelamat format T17:00:00.000Z)
-      const bersihkanTgl = (tglMentah) => {
-        if (!tglMentah || tglMentah === "---") return "---";
-        const d = new Date(tglMentah);
-        if (!isNaN(d.getTime())) {
-          const tgl = String(d.getDate()).padStart(2, '0');
-          const bln = String(d.getMonth() + 1).padStart(2, '0');
-          const thn = d.getFullYear();
-          return `${tgl}/${bln}/${thn}`;
-        }
-        return tglMentah; // Kalau bukan tanggal, biarkan apa adanya
-      };
+    try {
+      const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
+      const res = await response.json();
 
-      // TAMPILKAN DATA
-      document.getElementById('userNama').innerText = res.data.nama;
-      document.getElementById('userIdDisplay').innerText = id;
-      
-      // Di sini kita paksa tanggalnya rapi
-      document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
-      document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
-      
-      document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
-      
-      const statusEl = document.getElementById('userStatus');
-      statusEl.innerText = res.data.status;
-      statusEl.style.backgroundColor = res.data.status === 'AKTIF' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)';
-      statusEl.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
-    } else {
-      alert("ID Member Tidak Valid!");
+      if(res.success) {
+        document.getElementById('loginArea').style.display = 'none';
+        document.getElementById('dashboardArea').style.display = 'block';
+        
+        document.getElementById('userNama').innerText = res.data.nama;
+        document.getElementById('userIdDisplay').innerText = id;
+        document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
+        document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
+        document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
+        
+        const statusEl = document.getElementById('userStatus');
+        statusEl.innerText = res.data.status;
+        statusEl.style.backgroundColor = res.data.status === 'AKTIF' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)';
+        statusEl.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
+      } else {
+        alert("ID Member Tidak Valid!");
+        location.reload();
+      }
+    } catch(e) {
+      alert("Gangguan Jaringan!");
       location.reload();
     }
-  } catch(e) {
-    alert("Gangguan Jaringan!");
-    location.reload();
   }
-}
+
+  // LOGIKA BAYAR WIFI MANDIRI
+  async function konfirmasiBayar() {
+    const id = document.getElementById('userIdDisplay').innerText;
+    const nama = document.getElementById('userNama').innerText;
+    const saldoTxt = document.getElementById('userSaldo').innerText;
+    const saldoSekarang = parseInt(saldoTxt.replace(/[^0-9]/g, ''));
+    
+    // Sesuaikan harga paket bulanan di sini (Contoh: 150000)
+    const hargaPaket = 150000; 
+
+    if (saldoSekarang < hargaPaket) {
+      return alert("Gagal: Saldo Anda tidak cukup!");
+    }
+
+    const yakin = confirm(`Halo ${nama}, gunakan Rp ${hargaPaket.toLocaleString('id-ID')} untuk bayar Wifi bulan ini?`);
+    
+    if (yakin) {
+      const btn = document.getElementById('btnBayar');
+      btn.innerText = "SEDANG MEMPROSES...";
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "POTONG",
+            idMember: id,
+            nominal: hargaPaket,
+            keterangan: "BAYAR WIFI MANDIRI (APP)"
+          })
+        });
+
+        const hasil = await resp.text();
+        if (hasil === "Sukses") {
+          alert("PEMBAYARAN BERHASIL! Saldo telah terpotong.");
+          location.reload();
+        } else {
+          alert("Gagal: " + hasil);
+          btn.innerText = "⚡ BAYAR WIFI SEKARANG";
+          btn.disabled = false;
+        }
+      } catch (e) {
+        alert("Gagal terhubung ke server!");
+        btn.disabled = false;
+      }
+    }
+  }
 </script>
 </body>
 </html>
