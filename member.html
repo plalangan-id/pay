@@ -13,19 +13,21 @@
       --accent-orange: #cc5500;
       --text-white: #ffffff;
       --text-gray: #a0a0a0;
-      --green: #2ecc71;
+      --green-pay: #2ecc71;
+      --green-dark: #27ae60;
     }
 
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
     .container { max-width: 450px; margin: 0 auto; }
     
-    .header { text-align: left; margin-bottom: 25px; padding: 10px 5px; }
+    .header { text-align: left; margin-bottom: 20px; padding: 10px 5px; }
     .header h1 { font-family: 'JetBrains Mono', monospace; color: var(--primary-orange); margin: 0; font-size: 22px; letter-spacing: -1px; }
 
+    /* Kotak Oren */
     .balance-card {
       background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 100%);
       padding: 25px; border-radius: 20px; position: relative; overflow: hidden;
-      box-shadow: 0 15px 35px rgba(255,107,0,0.25);
+      box-shadow: 0 15px 35px rgba(255,107,0,0.2);
     }
 
     .id-tag {
@@ -34,31 +36,41 @@
       text-align: right; color: white;
     }
 
-    .info-list { margin-top: 25px; display: grid; gap: 12px; }
+    /* Form Bayar Flexibel */
+    .pay-section {
+      background: var(--card-bg); margin-top: 20px; padding: 20px; 
+      border-radius: 20px; border: 1px solid #222;
+    }
+    
+    .input-group { margin-top: 10px; }
+    .input-group label { font-size: 10px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px; }
+    
+    .input-nominal {
+      width: 100%; padding: 15px; background: #252525; border: 1px solid #333;
+      color: var(--green-pay); border-radius: 12px; font-family: 'JetBrains Mono', monospace;
+      font-size: 20px; font-weight: 700; box-sizing: border-box; text-align: center; outline: none;
+    }
+    .input-nominal:focus { border-color: var(--green-pay); }
+
+    .btn-pay {
+      width: 100%; padding: 15px; background: var(--green-pay); color: white;
+      border: none; border-radius: 12px; font-weight: 800; cursor: pointer;
+      font-size: 15px; letter-spacing: 1px; margin-top: 15px; transition: 0.3s;
+    }
+    .btn-pay:hover { background: var(--green-dark); }
+    .btn-pay:disabled { background: #444; color: #777; cursor: not-allowed; }
+
+    .info-list { margin-top: 20px; display: grid; gap: 10px; }
     .info-item { 
       background: var(--card-bg); padding: 15px; border-radius: 15px; 
       border: 1px solid #222; display: flex; justify-content: space-between; align-items: center;
     }
     
-    .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-white); }
+    .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; }
+    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-white); }
 
     .login-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 50px; text-align: center; }
-    input { 
-      width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; 
-      color: white; border-radius: 10px; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: center;
-    }
-    button { 
-      width: 100%; padding: 15px; background: var(--primary-orange); color: white; 
-      border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; letter-spacing: 1px;
-    }
-    
-    /* Style Tombol Bayar Wifi */
-    .btn-action {
-      background: white; color: var(--primary-orange); margin-top: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid white;
-    }
-    .btn-action:disabled { background: #666; color: #999; border-color: #666; }
+    .input-login { width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: center; }
   </style>
 </head>
 <body>
@@ -66,36 +78,38 @@
 <div class="container" id="loginArea">
   <div class="login-box">
     <h1 style="color: var(--primary-orange); font-family: 'JetBrains Mono';">P-PAY ACCESS</h1>
-    <p style="font-size: 12px; color: #666;">Masukkan ID Member Plalangan.net</p>
-    <input type="text" id="memberId" placeholder="IDM-000">
+    <input type="text" id="memberId" class="input-login" placeholder="ID MEMBER">
     <button onclick="loginMember()">MASUK SEKARANG</button>
   </div>
 </div>
 
 <div class="container" id="dashboardArea" style="display: none;">
-  <div class="header">
-    <h1>PLALANGAN.NET PAY</h1>
-  </div>
+  <div class="header"><h1>PLALANGAN.NET PAY</h1></div>
 
   <div class="balance-card">
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
-        <div class="label-tegas" style="color: rgba(255,255,255,0.8);">Nama Member</div>
-        <div id="userNama" style="font-size: 22px; font-weight: 800; color: white;">---</div>
+        <div class="label-tegas" style="color: rgba(255,255,255,0.7);">Member</div>
+        <div id="userNama" style="font-size: 20px; font-weight: 800; color: white;">---</div>
       </div>
       <div class="id-tag">
         <div style="font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
-        <div style="font-size: 10px; margin-top: 5px; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 4px;">AKTIF: <span id="userAktivasi">--/--/--</span></div>
+        <div style="font-size: 9px; margin-top: 5px; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 4px;">AKTIF: <span id="userAktivasi">--/--/--</span></div>
       </div>
     </div>
-
-    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-      <div class="label-tegas" style="color: rgba(255,255,255,0.9);">Saldo Deposit</div>
-      <div id="userSaldo" style="font-size: 42px; font-weight: 800; color: white;">Rp 0</div>
+    <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+      <div class="label-tegas" style="color: rgba(255,255,255,0.8);">Sisa Saldo</div>
+      <div id="userSaldo" style="font-size: 38px; font-weight: 800; color: white;">Rp 0</div>
     </div>
+  </div>
 
-    <button id="btnBayar" class="btn-action" onclick="konfirmasiBayar()">
-      ⚡ BAYAR WIFI SEKARANG
+  <div class="pay-section">
+    <div class="input-group">
+      <label>Nominal Pembayaran (Rp)</label>
+      <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="validasiTombol()">
+    </div>
+    <button id="btnBayar" class="btn-pay" onclick="konfirmasiBayar()" disabled>
+      ✔ BAYAR SEKARANG
     </button>
   </div>
 
@@ -106,81 +120,66 @@
     </div>
     <div class="info-item">
       <span class="label-tegas">Status Layanan</span>
-      <span id="userStatus" style="font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 5px;">---</span>
+      <span id="userStatus" style="font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px;">---</span>
     </div>
   </div>
 
-  <button onclick="location.reload()" style="margin-top: 30px; background: #222; font-size: 11px; opacity: 0.5;">LOGOUT SYSTEM</button>
+  <button onclick="location.reload()" style="margin-top: 20px; background: transparent; border: 1px solid #333; color: #666; font-size: 11px;">LOGOUT</button>
 </div>
 
 <script>
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAI1kCnsU38M0VN0-ZB0O5xDYHmmorGkGuqLBotaf-1YT3M4_94CdqI6pm-soEYO5u1g/exec";
 
-  // Fungsi Pembersihan Tanggal
-  const bersihkanTgl = (tglMentah) => {
-    if (!tglMentah || tglMentah === "---") return "---";
-    const d = new Date(tglMentah);
-    if (!isNaN(d.getTime())) {
-      const tgl = String(d.getDate()).padStart(2, '0');
-      const bln = String(d.getMonth() + 1).padStart(2, '0');
-      const thn = d.getFullYear();
-      return `${tgl}/${bln}/${thn}`;
-    }
-    return tglMentah;
+  const bersihkanTgl = (tgl) => {
+    if (!tgl || tgl === "---") return "---";
+    const d = new Date(tgl);
+    if (isNaN(d.getTime())) return tgl;
+    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
   };
+
+  function validasiTombol() {
+    const nom = document.getElementById('inputNominal').value;
+    document.getElementById('btnBayar').disabled = (!nom || nom <= 0);
+  }
 
   async function loginMember() {
     const id = document.getElementById('memberId').value.toUpperCase();
     if(!id) return alert("ID Kosong!");
-    document.querySelector('button').innerText = "MENYAMBUNGKAN...";
+    document.querySelector('#loginArea button').innerText = "WAIT...";
 
     try {
       const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
       const res = await response.json();
-
       if(res.success) {
         document.getElementById('loginArea').style.display = 'none';
         document.getElementById('dashboardArea').style.display = 'block';
-        
         document.getElementById('userNama').innerText = res.data.nama;
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
         document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
         document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
         
-        const statusEl = document.getElementById('userStatus');
-        statusEl.innerText = res.data.status;
-        statusEl.style.backgroundColor = res.data.status === 'AKTIF' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)';
-        statusEl.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
-      } else {
-        alert("ID Member Tidak Valid!");
-        location.reload();
-      }
-    } catch(e) {
-      alert("Gangguan Jaringan!");
-      location.reload();
-    }
+        const st = document.getElementById('userStatus');
+        st.innerText = res.data.status;
+        st.style.background = res.data.status === 'AKTIF' ? 'rgba(46,204,113,0.1)' : 'rgba(231,76,60,0.1)';
+        st.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
+      } else { alert("ID Salah!"); location.reload(); }
+    } catch(e) { alert("Gagal koneksi!"); location.reload(); }
   }
 
-  // LOGIKA BAYAR WIFI MANDIRI
   async function konfirmasiBayar() {
     const id = document.getElementById('userIdDisplay').innerText;
-    const nama = document.getElementById('userNama').innerText;
+    const nominal = parseInt(document.getElementById('inputNominal').value);
     const saldoTxt = document.getElementById('userSaldo').innerText;
     const saldoSekarang = parseInt(saldoTxt.replace(/[^0-9]/g, ''));
-    
-    // Sesuaikan harga paket bulanan di sini (Contoh: 150000)
-    const hargaPaket = 150000; 
 
-    if (saldoSekarang < hargaPaket) {
-      return alert("Gagal: Saldo Anda tidak cukup!");
-    }
+    if (nominal > saldoSekarang) return alert("Saldo tidak cukup!");
+    if (nominal < 1000) return alert("Minimal pembayaran Rp 1.000");
 
-    const yakin = confirm(`Halo ${nama}, gunakan Rp ${hargaPaket.toLocaleString('id-ID')} untuk bayar Wifi bulan ini?`);
-    
+    const yakin = confirm(`Bayar Wifi sebesar Rp ${nominal.toLocaleString('id-ID')}?`);
     if (yakin) {
       const btn = document.getElementById('btnBayar');
-      btn.innerText = "SEDANG MEMPROSES...";
+      btn.innerText = "MEMPROSES...";
       btn.disabled = true;
 
       try {
@@ -189,24 +188,15 @@
           body: JSON.stringify({
             action: "POTONG",
             idMember: id,
-            nominal: hargaPaket,
+            nominal: nominal,
             keterangan: "BAYAR WIFI MANDIRI (APP)"
           })
         });
-
-        const hasil = await resp.text();
-        if (hasil === "Sukses") {
-          alert("PEMBAYARAN BERHASIL! Saldo telah terpotong.");
+        if (await resp.text() === "Sukses") {
+          alert("PEMBAYARAN BERHASIL!");
           location.reload();
-        } else {
-          alert("Gagal: " + hasil);
-          btn.innerText = "⚡ BAYAR WIFI SEKARANG";
-          btn.disabled = false;
-        }
-      } catch (e) {
-        alert("Gagal terhubung ke server!");
-        btn.disabled = false;
-      }
+        } else { alert("Gagal!"); btn.innerText = "✔ BAYAR SEKARANG"; btn.disabled = false; }
+      } catch (e) { alert("Error!"); btn.disabled = false; }
     }
   }
 </script>
