@@ -1,228 +1,165 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PISCOK PAY | Member Area</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>P-PAY | MEMBER DASHBOARD</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #121212;
-      --card-bg: #1e1e1e;
+      --bg-dark: #0f0f0f;
+      --card-bg: #1a1a1a;
       --primary-orange: #ff6b00;
+      --accent-orange: #cc5500;
       --text-white: #ffffff;
-      --text-gray: #b0b0b0;
-      --success: #00ff88;
-      --danger: #ff4444;
+      --text-gray: #a0a0a0;
+      --green: #2ecc71;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-white);
-      margin: 0;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .container { width: 100%; max-width: 450px; }
-
-    /* Login Section */
-    #loginSection {
-      margin-top: 60px;
-      text-align: center;
-      padding: 30px;
-      background: var(--card-bg);
-      border-radius: 24px;
-      border: 1px solid #333;
-    }
-
-    /* Dashboard Section */
-    #dashboardSection { display: none; animation: fadeIn 0.5s ease; }
-
-    .card-saldo {
-      background: linear-gradient(135deg, #ff6b00 0%, #ff9e00 100%);
-      padding: 30px;
-      border-radius: 28px;
-      margin-bottom: 20px;
-      box-shadow: 0 15px 30px rgba(255, 107, 0, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .saldo-label { font-size: 13px; font-weight: 600; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
-    .saldo-value { font-size: 36px; font-weight: 700; margin: 10px 0; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
+    .container { max-width: 450px; margin: 0 auto; }
     
-    .member-info { border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; margin-top: 15px; }
-    .val-nama { font-size: 18px; font-weight: 600; display: block; }
-    .val-id { font-size: 12px; opacity: 0.7; font-family: monospace; }
+    /* Header Area */
+    .header { text-align: left; margin-bottom: 25px; padding: 10px 5px; }
+    .header h1 { font-family: 'JetBrains Mono', monospace; color: var(--primary-orange); margin: 0; font-size: 22px; letter-spacing: -1px; }
 
-    .action-card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 20px;
-      border: 1px solid #333;
-      margin-bottom: 20px;
+    /* Kartu Saldo (Kotak Oren Tegas) */
+    .balance-card {
+      background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 100%);
+      padding: 25px; border-radius: 20px; position: relative; overflow: hidden;
+      box-shadow: 0 15px 35px rgba(255,107,0,0.25);
     }
 
-    h3 { font-size: 16px; margin: 0 0 15px 0; color: var(--primary-orange); display: flex; align-items: center; gap: 8px; }
-
-    input {
-      background: #2a2a2a; border: 1px solid #444; color: white;
-      padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box;
-      margin-bottom: 15px; font-size: 16px; outline: none; transition: 0.3s;
-    }
-    input:focus { border-color: var(--primary-orange); }
-
-    .btn-pay {
-      background: var(--success); color: #052e16; border: none;
-      padding: 16px; border-radius: 12px; width: 100%; font-weight: 700;
-      cursor: pointer; font-size: 15px; transition: 0.3s;
+    .id-tag {
+      font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.2);
+      padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+      text-align: right; color: white;
     }
 
-    /* History */
-    .history-card { background: var(--card-bg); border-radius: 20px; padding: 10px 20px; border: 1px solid #333; }
-    .log-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 15px 0; border-bottom: 1px solid #333;
+    /* Info List */
+    .info-list { margin-top: 25px; display: grid; gap: 12px; }
+    .info-item { 
+      background: var(--card-bg); padding: 15px; border-radius: 15px; 
+      border: 1px solid #222; display: flex; justify-content: space-between; align-items: center;
     }
-    .log-item:last-child { border: none; }
-    .log-info .ket { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-    .log-info .tgl { font-size: 11px; color: var(--text-gray); }
-    .nominal { font-weight: 700; font-size: 14px; }
-    .plus { color: var(--success); }
-    .minus { color: var(--danger); }
+    
+    .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-white); }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* Login Box */
+    .login-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 50px; text-align: center; }
+    input { 
+      width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; 
+      color: white; border-radius: 10px; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: center;
+    }
+    button { 
+      width: 100%; padding: 15px; background: var(--primary-orange); color: white; 
+      border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  
-  <div id="loginSection">
-    <h1 style="color: var(--primary-orange); margin-bottom: 0;">PLALANGAN.NET</h1>
-    <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 30px;">Digital Billing Member</p>
-    <input type="text" id="memberId" placeholder="Masukkan ID Member">
-    <button class="btn-pay" style="background: var(--primary-orange); color: white;" onclick="loginMember()">MASUK DASHBOARD</button>
+<div class="container" id="loginArea">
+  <div class="login-box">
+    <h1 style="color: var(--primary-orange); font-family: 'JetBrains Mono';">P-PAY ACCESS</h1>
+    <p style="font-size: 12px; color: #666;">Masukkan ID Member Plalangan.net</p>
+    <input type="text" id="memberId" placeholder="IDM-000">
+    <button onclick="loginMember()">MASUK SEKARANG</button>
+  </div>
+</div>
+
+<div class="container" id="dashboardArea" style="display: none;">
+  <div class="header">
+    <h1>PLALANGAN.NET PAY</h1>
   </div>
 
-  <div id="dashboardSection">
-    <div class="card-saldo">
-      <div class="saldo-label">Saldo Deposit</div>
-      <div id="dispSaldo" class="saldo-value">Rp 0</div>
-      
-      <div class="member-info">
-        <span id="dispNama" class="val-nama">Memuat Nama...</span>
-        <span class="val-id">ID: <span id="dispId">---</span></span>
+  <div class="balance-card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <div class="label-tegas" style="color: rgba(255,255,255,0.8);">Nama Member</div>
+        <div id="userNama" style="font-size: 22px; font-weight: 800; color: white;">---</div>
+      </div>
+      <div class="id-tag">
+        <div style="font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
+        <div style="font-size: 10px; margin-top: 5px; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 4px;">AKTIF: <span id="userAktivasi">--/--/--</span></div>
       </div>
     </div>
 
-    <div class="action-card">
-      <h3>💸 Bayar Tagihan Wifi</h3>
-      <input type="number" id="payNominal" placeholder="Masukkan Nominal">
-      <button id="btnPay" class="btn-pay" onclick="prosesBayar()">KONFIRMASI BAYAR</button>
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+      <div class="label-tegas" style="color: rgba(255,255,255,0.9);">Saldo Deposit</div>
+      <div id="userSaldo" style="font-size: 42px; font-weight: 800; color: white;">Rp 0</div>
     </div>
-
-    <h4 style="margin: 0 0 15px 10px; font-size: 14px; color: var(--text-gray);">Riwayat Transaksi</h4>
-    <div class="history-card" id="listHistory">
-      </div>
-
-    <button onclick="logout()" style="background:transparent; color: var(--danger); border: none; width: 100%; margin: 30px 0; cursor: pointer; font-size: 13px;">Ganti Akun / Logout</button>
   </div>
 
+  <div class="info-list">
+    <div class="info-item">
+      <span class="label-tegas">Jatuh Tempo</span>
+      <span class="val-tegas" id="userTempo">--/--/--</span>
+    </div>
+    <div class="info-item">
+      <span class="label-tegas">Status Layanan</span>
+      <span id="userStatus" style="font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 5px;">---</span>
+    </div>
+  </div>
+
+  <button onclick="location.reload()" style="margin-top: 30px; background: #222; font-size: 11px; opacity: 0.5;">LOGOUT SYSTEM</button>
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbwVa_knGbxotfR5NjPtcjlksrsJ8dKXcZjs5CZRQpoBdSpuI6XDg2esDctvFx2_-xHCAw/exec"; // Ganti dengan link Web App GAS kamu
+  // Script logika tetap sama seperti sebelumnya, tinggal sesuaikan WEB_APP_URL kamu
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAI1kCnsU38M0VN0-ZB0O5xDYHmmorGkGuqLBotaf-1YT3M4_94CdqI6pm-soEYO5u1g/exec";
 
-  window.onload = function() {
-    const savedId = localStorage.getItem('piscokId');
-    if (savedId) {
-      document.getElementById('memberId').value = savedId;
-      loginMember();
-    }
-  };
+async function loginMember() {
+  const id = document.getElementById('memberId').value.toUpperCase();
+  if(!id) return alert("ID Kosong!");
+  
+  document.querySelector('button').innerText = "MENYAMBUNGKAN...";
 
-  async function loginMember() {
-    const id = document.getElementById('memberId').value;
-    if (!id) return alert("ID harus diisi");
+  try {
+    const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
+    const res = await response.json();
 
-    // Simulasi Fetch ke GAS
-    // Nanti di backend GAS, buat fungsi untuk menangani action: 'GET_DATA'
-    try {
-      const resp = await fetch(`${API_URL}?action=GET_DATA&id=${id}`);
-      const res = await resp.json();
-
-      if (res.success) {
-        localStorage.setItem('piscokId', id);
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('dashboardSection').style.display = 'block';
-        
-        document.getElementById('dispNama').innerText = res.data.nama;
-        document.getElementById('dispId').innerText = id.toUpperCase();
-        document.getElementById('dispSaldo').innerText = "Rp " + res.data.saldo.toLocaleString();
-        
-        renderLogs(res.logs);
-      } else {
-        alert("ID Member tidak terdaftar!");
-      }
-    } catch (e) {
-      alert("Gagal memuat data. Periksa koneksi atau URL API.");
-    }
-  }
-
-  function renderLogs(logs) {
-    let html = "";
-    logs.forEach(log => {
-      const isPlus = log.tipe === "TOPUP";
-      html += `
-        <div class="log-item">
-          <div class="log-info">
-            <div class="ket">${log.ket}</div>
-            <div class="tgl">${log.tgl}</div>
-          </div>
-          <div class="nominal ${isPlus ? 'plus' : 'minus'}">
-            ${isPlus ? '+' : '-'} Rp ${log.nominal.toLocaleString()}
-          </div>
-        </div>`;
-    });
-    document.getElementById('listHistory').innerHTML = html || "<p style='text-align:center;color:#666;font-size:12px;'>Belum ada aktivitas</p>";
-  }
-
-  async function prosesBayar() {
-    const id = localStorage.getItem('piscokId');
-    const nominal = document.getElementById('payNominal').value;
-    const btn = document.getElementById('btnPay');
-
-    if (!nominal || nominal <= 0) return alert("Nominal tidak valid");
-    if (!confirm(`Konfirmasi pembayaran Rp ${parseInt(nominal).toLocaleString()}?`)) return;
-
-    btn.disabled = true;
-    btn.innerText = "Memproses...";
-
-    try {
-      await fetch(API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "Bayar Wifi Mandiri" })
-      });
+    if(res.success) {
+      document.getElementById('loginArea').style.display = 'none';
+      document.getElementById('dashboardArea').style.display = 'block';
       
-      alert("Instruksi pembayaran dikirim! Halaman akan dimuat ulang.");
-      location.reload();
-    } catch (e) {
-      alert("Terjadi kesalahan.");
-      btn.disabled = false;
-      btn.innerText = "KONFIRMASI BAYAR";
-    }
-  }
+      // FUNGSI PEMBERSIH TANGGAL (Penyelamat format T17:00:00.000Z)
+      const bersihkanTgl = (tglMentah) => {
+        if (!tglMentah || tglMentah === "---") return "---";
+        const d = new Date(tglMentah);
+        if (!isNaN(d.getTime())) {
+          const tgl = String(d.getDate()).padStart(2, '0');
+          const bln = String(d.getMonth() + 1).padStart(2, '0');
+          const thn = d.getFullYear();
+          return `${tgl}/${bln}/${thn}`;
+        }
+        return tglMentah; // Kalau bukan tanggal, biarkan apa adanya
+      };
 
-  function logout() {
-    localStorage.removeItem('piscokId');
+      // TAMPILKAN DATA
+      document.getElementById('userNama').innerText = res.data.nama;
+      document.getElementById('userIdDisplay').innerText = id;
+      
+      // Di sini kita paksa tanggalnya rapi
+      document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
+      document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
+      
+      document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
+      
+      const statusEl = document.getElementById('userStatus');
+      statusEl.innerText = res.data.status;
+      statusEl.style.backgroundColor = res.data.status === 'AKTIF' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)';
+      statusEl.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
+    } else {
+      alert("ID Member Tidak Valid!");
+      location.reload();
+    }
+  } catch(e) {
+    alert("Gangguan Jaringan!");
     location.reload();
   }
+}
 </script>
-
 </body>
 </html>
