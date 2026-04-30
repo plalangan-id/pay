@@ -1,210 +1,284 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>P-PAY | MEMBER DASHBOARD</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+  <title>DANA-BOZZ | Plalangan.net</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0f0f0f;
-      --card-bg: #1a1a1a;
-      --primary-orange: #ff6b00;
-      --accent-orange: #cc5500;
-      --text-white: #ffffff;
-      --text-gray: #a0a0a0;
+      --dana-blue: #118eea;
+      --dana-dark: #0076e0;
+      --bozz-gold: #f39c12; /* Warna Emas untuk aksen BOZZ */
+      --bg-light: #f4f7fa;
+      --text-main: #333;
+      --text-gray: #888;
       --green-pay: #2ecc71;
-      --red-loss: #e74c3c;
+      --red-out: #e74c3c;
+      --card-white: #ffffff;
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
-    .container { max-width: 450px; margin: 0 auto; }
-    
-    .header { text-align: left; margin-bottom: 20px; padding: 10px 5px; }
-    .header h1 { font-family: 'JetBrains Mono', monospace; color: var(--primary-orange); margin: 0; font-size: 22px; letter-spacing: -1px; }
-
-    .balance-card {
-      background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 100%);
-      padding: 25px; border-radius: 20px; position: relative; box-shadow: 0 15px 35px rgba(255,107,0,0.2);
+    /* CSS MODE GELAP */
+    body.dark-mode {
+      --bg-light: #000000;
+      --text-main: #ffffff;
+      --text-gray: #aaaaaa;
+      --card-white: #151515;
     }
 
-    .id-tag {
-      font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.2);
-      padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
-      text-align: right; color: white;
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; }
+    .container { max-width: 450px; margin: 0 auto; min-height: 100vh; background: var(--card-white); transition: 0.3s; position: relative; }
+
+    /* HEADER STYLE DANA */
+    .dana-header {
+      background: linear-gradient(135deg, var(--dana-blue) 0%, var(--dana-dark) 100%);
+      padding: 30px 20px 60px 20px; color: white; position: relative;
+    }
+    .profile-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .user-info h2 { margin: 0; font-size: 18px; font-weight: 800; text-transform: uppercase; }
+    .user-info p { margin: 4px 0 0 0; font-size: 11px; font-family: 'JetBrains Mono'; opacity: 0.8; }
+    .aktiv-pill { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 9px; font-weight: 700; backdrop-filter: blur(5px); }
+
+    .dark-toggle {
+      position: absolute; bottom: 15px; right: 20px;
+      background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
+      width: 35px; height: 35px; cursor: pointer; color: white;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
     }
 
-    .pay-section {
-      background: var(--card-bg); margin-top: 20px; padding: 20px; 
-      border-radius: 20px; border: 1px solid #222;
+    /* SALDO CARD MELAYANG */
+    .main-card {
+      background: var(--card-white); margin: -40px 20px 20px 20px; padding: 20px; border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border: 1px solid rgba(0,0,0,0.05);
     }
-    
+    .label-saldo { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; }
+    .nominal-saldo { font-size: 34px; font-weight: 800; margin: 10px 0; color: var(--dana-blue); }
+
+    .stats-row { 
+      display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(0,0,0,0.05); 
+      padding-top: 15px; margin-top: 15px; 
+    }
+    body.dark-mode .stats-row { border-top-color: #222; }
+    .stat-item { text-align: center; }
+    .stat-item:first-child { border-right: 1px solid rgba(0,0,0,0.05); }
+    body.dark-mode .stat-item:first-child { border-right-color: #222; }
+    .stat-label { font-size: 9px; color: var(--text-gray); text-transform: uppercase; font-weight: 800; }
+    .stat-val { font-size: 12px; font-weight: 700; margin-top: 5px; font-family: 'JetBrains Mono'; }
+
+    /* ACTION SECTION */
+    .action-section { padding: 0 20px 20px 20px; }
+    .pay-grid { display: grid; grid-template-columns: 1fr 90px; gap: 10px; align-items: end; }
+    .input-box label { font-size: 9px; font-weight: 800; color: var(--text-gray); display: block; margin-bottom: 5px; text-transform: uppercase; }
     .input-nominal {
-      width: 100%; padding: 15px; background: #252525; border: 1px solid #333;
-      color: var(--green-pay); border-radius: 12px; font-family: 'JetBrains Mono', monospace;
-      font-size: 20px; font-weight: 700; box-sizing: border-box; text-align: center; outline: none;
+      width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1.5px solid rgba(0,0,0,0.05);
+      border-radius: 10px; font-family: 'JetBrains Mono'; font-size: 16px; font-weight: 700;
+      box-sizing: border-box; outline: none; color: inherit;
     }
-
-    .btn-pay {
-      width: 100%; padding: 15px; background: var(--green-pay); color: white;
-      border: none; border-radius: 12px; font-weight: 800; cursor: pointer;
-      font-size: 15px; letter-spacing: 1px; margin-top: 15px;
+    body.dark-mode .input-nominal { background: #1a1a1a; border-color: #333; }
+    .btn-bayar {
+      width: 100%; padding: 13px; background: var(--green-pay); color: white;
+      border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 11px;
     }
-    .btn-pay:disabled { background: #444; color: #777; }
+    .btn-bayar:disabled { background: #ccc; opacity: 0.5; }
 
-    /* RIWAYAT STYLE */
-    .history-section { margin-top: 25px; }
-    .history-title { font-size: 12px; font-weight: 800; color: var(--text-gray); margin-bottom: 10px; padding-left: 5px; text-transform: uppercase; }
-    .history-list { background: var(--card-bg); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+    /* RIWAYAT LIST */
+    .history-header { padding: 12px 20px; font-size: 11px; font-weight: 800; color: var(--text-gray); text-transform: uppercase; background: rgba(0,0,0,0.02); }
+    body.dark-mode .history-header { background: #111; }
     .history-item { 
-      padding: 12px 15px; border-bottom: 1px solid #222; display: flex; 
+      padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; 
       justify-content: space-between; align-items: center; 
     }
-    .history-item:last-child { border-bottom: none; }
-    .hist-left { font-size: 10px; color: var(--text-gray); font-family: 'JetBrains Mono'; }
-    .hist-mid { flex-grow: 1; margin-left: 15px; font-size: 12px; font-weight: 700; }
-    .hist-right { text-align: right; font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 800; }
+    body.dark-mode .history-item { border-bottom-color: #222; }
+    .hist-desc { font-size: 13px; font-weight: 600; }
+    .hist-date { font-size: 10px; color: var(--text-gray); margin-top: 3px; font-family: 'JetBrains Mono'; }
+    .hist-amt { font-family: 'JetBrains Mono'; font-size: 13px; font-weight: 800; }
 
-    .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; }
-    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-    
-    .login-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 50px; text-align: center; }
-    .input-login { width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: center; }
+    /* LOADING & LOGIN */
+    #loadingOverlay {
+      position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8);
+      display:none; align-items:center; justify-content:center; z-index:9999; font-weight:800; color: var(--dana-blue);
+    }
+    body.dark-mode #loadingOverlay { background: rgba(0,0,0,0.8); }
+    .login-container { padding: 60px 30px; text-align: center; }
+    .input-login { width: 100%; padding: 15px; margin-top: 25px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); text-align: center; font-family: 'JetBrains Mono'; font-size: 18px; box-sizing: border-box; background: transparent; color: inherit; }
   </style>
 </head>
-<body>
+<body id="mainBody">
 
+<div id="loadingOverlay">MEMPROSES...</div>
+
+<!-- AREA LOGIN -->
 <div class="container" id="loginArea">
-  <div class="login-box">
-    <h1 style="color: var(--primary-orange); font-family: 'JetBrains Mono';">P-PAY ACCESS</h1>
+  <div class="login-container">
+    <div style="font-size: 32px; color: var(--dana-blue); font-weight: 900; letter-spacing: -1px;">DANA<span style="color: var(--bozz-gold);">-BOZZ</span></div>
+    <p style="color: var(--text-gray); font-size: 11px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Member Access Plalangan.net</p>
     <input type="text" id="memberId" class="input-login" placeholder="ID MEMBER">
-    <button onclick="loginMember()" style="background:var(--primary-orange); width:100%; padding:15px; border-radius:10px; color:white; border:none; font-weight:800;">MASUK SEKARANG</button>
+    <button onclick="loginMember()" style="background: var(--dana-blue); width: 100%; padding: 15px; border-radius: 12px; border: none; color: white; font-weight: 800; margin-top: 20px; cursor: pointer;">MASUK</button>
   </div>
 </div>
 
+<!-- AREA DASHBOARD -->
 <div class="container" id="dashboardArea" style="display: none;">
-  <div class="header"><h1>PLALANGAN.NET PAY</h1></div>
+  <div class="dana-header">
+    <button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
+    
+    <!-- JUDUL TENGAH (BARU) -->
+    <div style="text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 900; letter-spacing: -1px; color: white;">
+        DANA<span style="color: var(--bozz-gold);">-BOZZ</span>
+    </div>
 
-  <!-- INFO SALDO -->
-  <div class="balance-card">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <div>
-        <div class="label-tegas" style="color: rgba(255,255,255,0.7);">Member</div>
-        <div id="userNama" style="font-size: 20px; font-weight: 800; color: white;">---</div>
+    <div class="profile-top">
+      <div class="user-info">
+        <h2 id="userNama">---</h2>
+        <p>ID: <span id="userIdDisplay">---</span></p>
       </div>
-      <div class="id-tag">
-        <div style="font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
-        <div style="font-size: 9px; margin-top: 5px; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 4px;">AKTIF: <span id="userAktivasi">--/--/--</span></div>
+      <div class="aktiv-pill">AKTIF: <span id="userAktivasi">--/--/--</span></div>
+    </div>
+  </div>
+
+  <div class="main-card">
+    <div class="label-saldo">Sisa Saldo Deposit</div>
+    <div id="userSaldo" class="nominal-saldo">Rp 0</div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-label">Masuk</div>
+        <div id="totalMasuk" class="stat-val" style="color: var(--green-pay);">Rp 0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Keluar</div>
+        <div id="totalKeluar" class="stat-val" style="color: var(--red-out);">Rp 0</div>
       </div>
     </div>
-    <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-      <div class="label-tegas" style="color: rgba(255,255,255,0.8);">Sisa Saldo</div>
-      <div id="userSaldo" style="font-size: 38px; font-weight: 800; color: white;">Rp 0</div>
+  </div>
+
+  <div class="action-section">
+    <div class="pay-grid">
+      <div class="input-box">
+        <label>Input Nominal Bayar</label>
+        <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="document.getElementById('btnBayar').disabled = !this.value">
+      </div>
+      <button id="btnBayar" class="btn-bayar" onclick="konfirmasiBayar()" disabled>BAYAR</button>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 10px;">
+        <span style="color: var(--text-gray);">Tempo: <b id="userTempo" style="color: var(--text-main);">--/--/--</b></span>
+        <span id="userStatus" style="font-weight: 800;">---</span>
     </div>
   </div>
 
-  <!-- INPUT BAYAR -->
-  <div class="pay-section">
-    <label class="label-tegas">Nominal Bayar (Rp)</label>
-    <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="validasiTombol()">
-    <button id="btnBayar" class="btn-pay" onclick="konfirmasiBayar()" disabled>✔ BAYAR SEKARANG</button>
-  </div>
+  <div class="history-header">Riwayat Transaksi</div>
+  <div id="historyList" class="history-list"></div>
 
-  <!-- RIWAYAT TRANSAKSI -->
-  <div class="history-section">
-    <div class="history-title">Riwayat Terakhir</div>
-    <div id="historyList" class="history-list">
-      <div style="padding: 20px; text-align: center; color: #444; font-size: 11px;">Belum ada riwayat</div>
-    </div>
+  <div style="text-align: center; padding: 40px 20px;">
+    <button onclick="logout()" style="background:none; border:none; color:var(--text-gray); font-size:10px; font-weight:800; letter-spacing:1px; cursor:pointer;">LOGOUT SYSTEM</button>
   </div>
-
-  <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-    <div class="history-list" style="padding:15px; border-radius:15px;">
-        <span class="label-tegas">Tempo:</span><br>
-        <span id="userTempo" class="val-tegas">--/--/--</span>
-    </div>
-    <div class="history-list" style="padding:15px; border-radius:15px; text-align:right;">
-        <span class="label-tegas">Status:</span><br>
-        <span id="userStatus" style="font-size:11px; font-weight:800;">---</span>
-    </div>
-  </div>
-
-  <button onclick="location.reload()" style="margin: 30px auto; display:block; background: transparent; border: none; color: #444; font-size: 10px; letter-spacing:1px;">LOGOUT SYSTEM</button>
 </div>
 
 <script>
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxAI1kCnsU38M0VN0-ZB0O5xDYHmmorGkGuqLBotaf-1YT3M4_94CdqI6pm-soEYO5u1g/exec";
 
+  // 1. TEMA & SESI
+  function toggleDarkMode() {
+    const body = document.getElementById('mainBody');
+    const btn = document.getElementById('darkBtn');
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    btn.innerText = isDark ? "☀️" : "🌙";
+    localStorage.setItem('p-pay-theme', isDark ? 'dark' : 'light');
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem('p-pay-theme') === 'dark') {
+      document.getElementById('mainBody').classList.add('dark-mode');
+      document.getElementById('darkBtn').innerText = "☀️";
+    }
+    const savedId = localStorage.getItem('p-pay-session');
+    if (savedId) {
+      document.getElementById('memberId').value = savedId;
+      loginMember(true);
+    }
+  };
+
+  // 2. FORMATTER
   const bersihkanTgl = (tgl) => {
     if (!tgl || tgl === "---") return "---";
     const d = new Date(tgl);
-    if (isNaN(d.getTime())) return tgl;
-    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    return isNaN(d.getTime()) ? tgl : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
   };
 
-  function validasiTombol() {
-    const nom = document.getElementById('inputNominal').value;
-    document.getElementById('btnBayar').disabled = (!nom || nom <= 0);
-  }
+  const formatWaktuRiwayat = (isoString) => {
+    if (!isoString) return "---";
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString;
+    const tgl = String(d.getDate()).padStart(2, '0');
+    const bln = String(d.getMonth() + 1).padStart(2, '0');
+    const jam = String(d.getHours()).padStart(2, '0');
+    const mnt = String(d.getMinutes()).padStart(2, '0');
+    return `${tgl}/${bln}/${d.getFullYear()} ${jam}:${mnt}`;
+  };
 
-  async function loginMember() {
+  // 3. LOGIKA CORE
+  async function loginMember(isAuto = false) {
     const id = document.getElementById('memberId').value.toUpperCase();
-    if(!id) return alert("ID Kosong!");
-    document.querySelector('#loginArea button').innerText = "CONNECTING...";
+    if(!id) return;
+    if(!isAuto) document.getElementById('loadingOverlay').style.display = 'flex';
 
     try {
       const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
       const res = await response.json();
+      document.getElementById('loadingOverlay').style.display = 'none';
+
       if(res.success) {
+        localStorage.setItem('p-pay-session', id);
         document.getElementById('loginArea').style.display = 'none';
         document.getElementById('dashboardArea').style.display = 'block';
-        
         document.getElementById('userNama').innerText = res.data.nama;
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
         document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
         document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
         
-        // Render Riwayat
-        const histDiv = document.getElementById('historyList');
-        if(res.logs && res.logs.length > 0) {
-          histDiv.innerHTML = res.logs.map(log => `
+        let masuk = 0, keluar = 0;
+        if(res.logs) {
+          res.logs.forEach(l => { if(l.tipe === 'TOPUP') masuk += l.nominal; else keluar += l.nominal; });
+          document.getElementById('totalMasuk').innerText = "Rp " + masuk.toLocaleString('id-ID');
+          document.getElementById('totalKeluar').innerText = "Rp " + keluar.toLocaleString('id-ID');
+          document.getElementById('historyList').innerHTML = res.logs.map(log => `
             <div class="history-item">
-              <div class="hist-left">${log.tgl}</div>
-              <div class="hist-mid">${log.ket}</div>
-              <div class="hist-right" style="color: ${log.tipe === 'TOPUP' ? 'var(--green-pay)' : 'var(--red-loss)'}">
-                ${log.tipe === 'TOPUP' ? '+' : '-'}${log.nominal.toLocaleString('id-ID')}
-              </div>
-            </div>
-          `).join('');
+              <div><div class="hist-desc">${log.ket}</div><div class="hist-date">${formatWaktuRiwayat(log.tgl)}</div></div>
+              <div class="hist-amt" style="color: ${log.tipe === 'TOPUP' ? 'var(--green-pay)' : 'var(--red-out)'}">${log.tipe === 'TOPUP' ? '+' : '-'}${log.nominal.toLocaleString('id-ID')}</div>
+            </div>`).join('');
         }
-
         const st = document.getElementById('userStatus');
         st.innerText = res.data.status;
-        st.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
-      } else { alert("ID Salah!"); location.reload(); }
-    } catch(e) { alert("Gagal koneksi!"); location.reload(); }
+        st.style.color = res.data.status === 'AKTIF' ? 'var(--green-pay)' : 'var(--red-out)';
+      } else { if(!isAuto) alert("ID Tidak Ada!"); logout(); }
+    } catch(e) { document.getElementById('loadingOverlay').style.display = 'none'; }
   }
 
   async function konfirmasiBayar() {
     const id = document.getElementById('userIdDisplay').innerText;
     const nominal = parseInt(document.getElementById('inputNominal').value);
     const saldoSekarang = parseInt(document.getElementById('userSaldo').innerText.replace(/[^0-9]/g, ''));
-
-    if (nominal > saldoSekarang) return alert("Saldo tidak cukup!");
-    if (confirm(`Potong saldo Rp ${nominal.toLocaleString('id-ID')} untuk pembayaran?`)) {
-      const btn = document.getElementById('btnBayar');
-      btn.innerText = "PROCESSING..."; btn.disabled = true;
+    if (nominal > saldoSekarang) return alert("Saldo Kurang!");
+    
+    if (confirm(`Bayar Rp ${nominal.toLocaleString('id-ID')}?`)) {
+      document.getElementById('loadingOverlay').style.display = 'flex';
       try {
         const resp = await fetch(WEB_APP_URL, {
           method: "POST",
-          body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "PAY WIFI" })
+          body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "BAYAR WIFI" })
         });
-        if (await resp.text() === "Sukses") { alert("BERHASIL!"); location.reload(); }
-        else { alert("Gagal!"); btn.disabled = false; }
-      } catch (e) { alert("Error!"); btn.disabled = false; }
+        if (await resp.text() === "Sukses") { 
+          alert("SUKSES!"); 
+          loginMember(true); // Update data tanpa logout
+          document.getElementById('inputNominal').value = "";
+        }
+      } catch (e) { alert("Gagal!"); }
+      document.getElementById('loadingOverlay').style.display = 'none';
     }
   }
+
+  function logout() { localStorage.removeItem('p-pay-session'); location.reload(); }
 </script>
 </body>
 </html>
