@@ -14,7 +14,7 @@
       --text-white: #ffffff;
       --text-gray: #a0a0a0;
       --green-pay: #2ecc71;
-      --green-dark: #27ae60;
+      --red-loss: #e74c3c;
     }
 
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-white); margin: 0; padding: 15px; }
@@ -23,11 +23,9 @@
     .header { text-align: left; margin-bottom: 20px; padding: 10px 5px; }
     .header h1 { font-family: 'JetBrains Mono', monospace; color: var(--primary-orange); margin: 0; font-size: 22px; letter-spacing: -1px; }
 
-    /* Kotak Oren */
     .balance-card {
       background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 100%);
-      padding: 25px; border-radius: 20px; position: relative; overflow: hidden;
-      box-shadow: 0 15px 35px rgba(255,107,0,0.2);
+      padding: 25px; border-radius: 20px; position: relative; box-shadow: 0 15px 35px rgba(255,107,0,0.2);
     }
 
     .id-tag {
@@ -36,39 +34,40 @@
       text-align: right; color: white;
     }
 
-    /* Form Bayar Flexibel */
     .pay-section {
       background: var(--card-bg); margin-top: 20px; padding: 20px; 
       border-radius: 20px; border: 1px solid #222;
     }
-    
-    .input-group { margin-top: 10px; }
-    .input-group label { font-size: 10px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px; }
     
     .input-nominal {
       width: 100%; padding: 15px; background: #252525; border: 1px solid #333;
       color: var(--green-pay); border-radius: 12px; font-family: 'JetBrains Mono', monospace;
       font-size: 20px; font-weight: 700; box-sizing: border-box; text-align: center; outline: none;
     }
-    .input-nominal:focus { border-color: var(--green-pay); }
 
     .btn-pay {
       width: 100%; padding: 15px; background: var(--green-pay); color: white;
       border: none; border-radius: 12px; font-weight: 800; cursor: pointer;
-      font-size: 15px; letter-spacing: 1px; margin-top: 15px; transition: 0.3s;
+      font-size: 15px; letter-spacing: 1px; margin-top: 15px;
     }
-    .btn-pay:hover { background: var(--green-dark); }
-    .btn-pay:disabled { background: #444; color: #777; cursor: not-allowed; }
+    .btn-pay:disabled { background: #444; color: #777; }
 
-    .info-list { margin-top: 20px; display: grid; gap: 10px; }
-    .info-item { 
-      background: var(--card-bg); padding: 15px; border-radius: 15px; 
-      border: 1px solid #222; display: flex; justify-content: space-between; align-items: center;
+    /* RIWAYAT STYLE */
+    .history-section { margin-top: 25px; }
+    .history-title { font-size: 12px; font-weight: 800; color: var(--text-gray); margin-bottom: 10px; padding-left: 5px; text-transform: uppercase; }
+    .history-list { background: var(--card-bg); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+    .history-item { 
+      padding: 12px 15px; border-bottom: 1px solid #222; display: flex; 
+      justify-content: space-between; align-items: center; 
     }
-    
+    .history-item:last-child { border-bottom: none; }
+    .hist-left { font-size: 10px; color: var(--text-gray); font-family: 'JetBrains Mono'; }
+    .hist-mid { flex-grow: 1; margin-left: 15px; font-size: 12px; font-weight: 700; }
+    .hist-right { text-align: right; font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 800; }
+
     .label-tegas { font-size: 10px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; }
-    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-white); }
-
+    .val-tegas { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    
     .login-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 50px; text-align: center; }
     .input-login { width: 100%; padding: 15px; margin: 15px 0; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: center; }
   </style>
@@ -79,13 +78,14 @@
   <div class="login-box">
     <h1 style="color: var(--primary-orange); font-family: 'JetBrains Mono';">P-PAY ACCESS</h1>
     <input type="text" id="memberId" class="input-login" placeholder="ID MEMBER">
-    <button onclick="loginMember()">MASUK SEKARANG</button>
+    <button onclick="loginMember()" style="background:var(--primary-orange); width:100%; padding:15px; border-radius:10px; color:white; border:none; font-weight:800;">MASUK SEKARANG</button>
   </div>
 </div>
 
 <div class="container" id="dashboardArea" style="display: none;">
   <div class="header"><h1>PLALANGAN.NET PAY</h1></div>
 
+  <!-- INFO SALDO -->
   <div class="balance-card">
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
@@ -103,28 +103,33 @@
     </div>
   </div>
 
+  <!-- INPUT BAYAR -->
   <div class="pay-section">
-    <div class="input-group">
-      <label>Nominal Pembayaran (Rp)</label>
-      <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="validasiTombol()">
-    </div>
-    <button id="btnBayar" class="btn-pay" onclick="konfirmasiBayar()" disabled>
-      ✔ BAYAR SEKARANG
-    </button>
+    <label class="label-tegas">Nominal Bayar (Rp)</label>
+    <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="validasiTombol()">
+    <button id="btnBayar" class="btn-pay" onclick="konfirmasiBayar()" disabled>✔ BAYAR SEKARANG</button>
   </div>
 
-  <div class="info-list">
-    <div class="info-item">
-      <span class="label-tegas">Jatuh Tempo</span>
-      <span class="val-tegas" id="userTempo">--/--/--</span>
-    </div>
-    <div class="info-item">
-      <span class="label-tegas">Status Layanan</span>
-      <span id="userStatus" style="font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px;">---</span>
+  <!-- RIWAYAT TRANSAKSI -->
+  <div class="history-section">
+    <div class="history-title">Riwayat Terakhir</div>
+    <div id="historyList" class="history-list">
+      <div style="padding: 20px; text-align: center; color: #444; font-size: 11px;">Belum ada riwayat</div>
     </div>
   </div>
 
-  <button onclick="location.reload()" style="margin-top: 20px; background: transparent; border: 1px solid #333; color: #666; font-size: 11px;">LOGOUT</button>
+  <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+    <div class="history-list" style="padding:15px; border-radius:15px;">
+        <span class="label-tegas">Tempo:</span><br>
+        <span id="userTempo" class="val-tegas">--/--/--</span>
+    </div>
+    <div class="history-list" style="padding:15px; border-radius:15px; text-align:right;">
+        <span class="label-tegas">Status:</span><br>
+        <span id="userStatus" style="font-size:11px; font-weight:800;">---</span>
+    </div>
+  </div>
+
+  <button onclick="location.reload()" style="margin: 30px auto; display:block; background: transparent; border: none; color: #444; font-size: 10px; letter-spacing:1px;">LOGOUT SYSTEM</button>
 </div>
 
 <script>
@@ -145,7 +150,7 @@
   async function loginMember() {
     const id = document.getElementById('memberId').value.toUpperCase();
     if(!id) return alert("ID Kosong!");
-    document.querySelector('#loginArea button').innerText = "WAIT...";
+    document.querySelector('#loginArea button').innerText = "CONNECTING...";
 
     try {
       const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
@@ -153,15 +158,29 @@
       if(res.success) {
         document.getElementById('loginArea').style.display = 'none';
         document.getElementById('dashboardArea').style.display = 'block';
+        
         document.getElementById('userNama').innerText = res.data.nama;
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
         document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
         document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
         
+        // Render Riwayat
+        const histDiv = document.getElementById('historyList');
+        if(res.logs && res.logs.length > 0) {
+          histDiv.innerHTML = res.logs.map(log => `
+            <div class="history-item">
+              <div class="hist-left">${log.tgl}</div>
+              <div class="hist-mid">${log.ket}</div>
+              <div class="hist-right" style="color: ${log.tipe === 'TOPUP' ? 'var(--green-pay)' : 'var(--red-loss)'}">
+                ${log.tipe === 'TOPUP' ? '+' : '-'}${log.nominal.toLocaleString('id-ID')}
+              </div>
+            </div>
+          `).join('');
+        }
+
         const st = document.getElementById('userStatus');
         st.innerText = res.data.status;
-        st.style.background = res.data.status === 'AKTIF' ? 'rgba(46,204,113,0.1)' : 'rgba(231,76,60,0.1)';
         st.style.color = res.data.status === 'AKTIF' ? '#2ecc71' : '#e74c3c';
       } else { alert("ID Salah!"); location.reload(); }
     } catch(e) { alert("Gagal koneksi!"); location.reload(); }
@@ -170,32 +189,19 @@
   async function konfirmasiBayar() {
     const id = document.getElementById('userIdDisplay').innerText;
     const nominal = parseInt(document.getElementById('inputNominal').value);
-    const saldoTxt = document.getElementById('userSaldo').innerText;
-    const saldoSekarang = parseInt(saldoTxt.replace(/[^0-9]/g, ''));
+    const saldoSekarang = parseInt(document.getElementById('userSaldo').innerText.replace(/[^0-9]/g, ''));
 
     if (nominal > saldoSekarang) return alert("Saldo tidak cukup!");
-    if (nominal < 1000) return alert("Minimal pembayaran Rp 1.000");
-
-    const yakin = confirm(`Bayar Wifi sebesar Rp ${nominal.toLocaleString('id-ID')}?`);
-    if (yakin) {
+    if (confirm(`Potong saldo Rp ${nominal.toLocaleString('id-ID')} untuk pembayaran?`)) {
       const btn = document.getElementById('btnBayar');
-      btn.innerText = "MEMPROSES...";
-      btn.disabled = true;
-
+      btn.innerText = "PROCESSING..."; btn.disabled = true;
       try {
         const resp = await fetch(WEB_APP_URL, {
           method: "POST",
-          body: JSON.stringify({
-            action: "POTONG",
-            idMember: id,
-            nominal: nominal,
-            keterangan: "BAYAR WIFI MANDIRI (APP)"
-          })
+          body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "PAY WIFI" })
         });
-        if (await resp.text() === "Sukses") {
-          alert("PEMBAYARAN BERHASIL!");
-          location.reload();
-        } else { alert("Gagal!"); btn.innerText = "✔ BAYAR SEKARANG"; btn.disabled = false; }
+        if (await resp.text() === "Sukses") { alert("BERHASIL!"); location.reload(); }
+        else { alert("Gagal!"); btn.disabled = false; }
       } catch (e) { alert("Error!"); btn.disabled = false; }
     }
   }
