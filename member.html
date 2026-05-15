@@ -2,283 +2,315 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DANA-BOZZ | Plalangan.net</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MOBILE BILLING | PLALANGAN.NET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Roboto:wght@700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --dana-blue: #118eea;
-      --dana-dark: #0076e0;
-      --bozz-gold: #f39c12; /* Warna Emas untuk aksen BOZZ */
-      --bg-light: #f4f7fa;
-      --text-main: #333;
-      --text-gray: #888;
-      --green-pay: #2ecc71;
-      --red-out: #e74c3c;
-      --card-white: #ffffff;
+      --primary: #0085FF;
+      --gold: #FFB800;
+      --success: #22C55E;
+      --danger: #EF4444;
+      
+      /* Default Dark Mode (Kunci) */
+      --bg-body: #000;
+      --bg-container: #0F172A;
+      --card-bg: #1E293B;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --input-bg: #1E293B;
+      --input-border: #334155;
+      --v-box-bg: rgba(0, 0, 0, 0.3);
     }
 
-    /* CSS MODE GELAP */
-    body.dark-mode {
-      --bg-light: #000000;
-      --text-main: #ffffff;
-      --text-gray: #aaaaaa;
-      --card-white: #151515;
+    /* Light Mode Styles */
+    [data-theme="light"] {
+      --bg-body: #E2E8F0;
+      --bg-container: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --input-bg: #FFFFFF;
+      --input-border: #CBD5E1;
+      --v-box-bg: #F1F5F9;
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); margin: 0; padding: 0; transition: 0.3s; }
-    .container { max-width: 450px; margin: 0 auto; min-height: 100vh; background: var(--card-white); transition: 0.3s; position: relative; }
-
-    /* HEADER STYLE DANA */
-    .dana-header {
-      background: linear-gradient(135deg, var(--dana-blue) 0%, var(--dana-dark) 100%);
-      padding: 30px 20px 60px 20px; color: white; position: relative;
-    }
-    .profile-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .user-info h2 { margin: 0; font-size: 18px; font-weight: 800; text-transform: uppercase; }
-    .user-info p { margin: 4px 0 0 0; font-size: 11px; font-family: 'JetBrains Mono'; opacity: 0.8; }
-    .aktiv-pill { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 9px; font-weight: 700; backdrop-filter: blur(5px); }
-
-    .dark-toggle {
-      position: absolute; bottom: 15px; right: 20px;
-      background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
-      width: 35px; height: 35px; cursor: pointer; color: white;
-      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--bg-body);
+      margin: 0; padding: 0; 
+      display: flex; justify-content: center;
+      color: var(--text-main);
+      transition: background 0.3s ease;
     }
 
-    /* SALDO CARD MELAYANG */
-    .main-card {
-      background: var(--card-white); margin: -40px 20px 20px 20px; padding: 20px; border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border: 1px solid rgba(0,0,0,0.05);
+    .mobile-container {
+      width: 100%; max-width: 480px; min-height: 100vh;
+      background-color: var(--bg-container);
+      position: relative;
+      overflow-x: hidden; padding-bottom: 40px;
     }
-    .label-saldo { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; }
-    .nominal-saldo { font-size: 34px; font-weight: 800; margin: 10px 0; color: var(--dana-blue); }
 
-    .stats-row { 
-      display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(0,0,0,0.05); 
-      padding-top: 15px; margin-top: 15px; 
+    /* THEME TOGGLE */
+    .theme-toggle {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none; color: white; width: 40px; height: 40px;
+      border-radius: 12px; cursor: pointer; z-index: 10;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
     }
-    body.dark-mode .stats-row { border-top-color: #222; }
-    .stat-item { text-align: center; }
-    .stat-item:first-child { border-right: 1px solid rgba(0,0,0,0.05); }
-    body.dark-mode .stat-item:first-child { border-right-color: #222; }
-    .stat-label { font-size: 9px; color: var(--text-gray); text-transform: uppercase; font-weight: 800; }
-    .stat-val { font-size: 12px; font-weight: 700; margin-top: 5px; font-family: 'JetBrains Mono'; }
 
-    /* ACTION SECTION */
-    .action-section { padding: 0 20px 20px 20px; }
-    .pay-grid { display: grid; grid-template-columns: 1fr 90px; gap: 10px; align-items: end; }
-    .input-box label { font-size: 9px; font-weight: 800; color: var(--text-gray); display: block; margin-bottom: 5px; text-transform: uppercase; }
-    .input-nominal {
-      width: 100%; padding: 12px; background: rgba(0,0,0,0.03); border: 1.5px solid rgba(0,0,0,0.05);
-      border-radius: 10px; font-family: 'JetBrains Mono'; font-size: 16px; font-weight: 700;
-      box-sizing: border-box; outline: none; color: inherit;
+    /* HEADER */
+    .header {
+      background: linear-gradient(180deg, #0085FF 0%, #0056FF 100%);
+      padding: 40px 20px 80px;
+      border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+      color: white;
     }
-    body.dark-mode .input-nominal { background: #1a1a1a; border-color: #333; }
-    .btn-bayar {
-      width: 100%; padding: 13px; background: var(--green-pay); color: white;
-      border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 11px;
-    }
-    .btn-bayar:disabled { background: #ccc; opacity: 0.5; }
 
-    /* RIWAYAT LIST */
-    .history-header { padding: 12px 20px; font-size: 11px; font-weight: 800; color: var(--text-gray); text-transform: uppercase; background: rgba(0,0,0,0.02); }
-    body.dark-mode .history-header { background: #111; }
+    .brand { font-weight: 800; font-size: 22px; text-align: center; margin-bottom: 25px; }
+    .brand span { color: var(--gold); }
+
+    /* VOUCHER CARD */
+    .voucher-card {
+      background: var(--card-bg);
+      margin: -40px 20px 20px;
+      padding: 25px;
+      border-radius: 25px;
+      display: flex; flex-direction: column; gap: 15px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,184,0,0.2);
+    }
+
+    .v-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--text-muted); padding-bottom: 10px; }
+    .v-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
+    
+    .v-code-box {
+      background: var(--v-box-bg);
+      padding: 20px 15px; 
+      border-radius: 20px; 
+      text-align: center;
+      border: 1px solid rgba(255, 184, 0, 0.3);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .v-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; justify-items: center; }
+
+    .v-code { 
+      font-family: 'Roboto', monospace; 
+      color: var(--gold); 
+      font-size: 16px; font-weight: 800; 
+      background: rgba(255, 184, 0, 0.1);
+      padding: 12px 5px; border-radius: 12px;
+      width: 100%; border: 1px solid rgba(255, 184, 0, 0.2);
+      box-sizing: border-box;
+    }
+
+    /* INFO & PAY SECTION */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 15px; }
+    .info-item { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--input-border); }
+    .info-val { font-size: 16px; font-weight: 800; color: var(--gold); margin-top: 5px; }
+
+    .pay-section { margin: 0 20px 25px; background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--input-border); }
+    .pay-group { display: flex; gap: 10px; }
+    .pay-input { 
+      flex: 1; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main);
+      padding: 12px; border-radius: 12px; font-family: 'JetBrains Mono'; font-weight: 700; outline: none; 
+    }
+    .pay-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+
+    /* HISTORY */
+    .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 25px; }
+    .report-item { padding: 12px; border-radius: 15px; color: white; }
+    .bg-in { background: var(--success); }
+    .bg-out { background: var(--danger); }
+    
+    .history-list { padding: 0 20px; }
     .history-item { 
-      padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; 
-      justify-content: space-between; align-items: center; 
+      background: var(--card-bg); padding: 12px 15px; border-radius: 15px; 
+      display: flex; justify-content: space-between; align-items: center; 
+      margin-bottom: 8px; border: 1px solid var(--input-border); 
     }
-    body.dark-mode .history-item { border-bottom-color: #222; }
-    .hist-desc { font-size: 13px; font-weight: 600; }
-    .hist-date { font-size: 10px; color: var(--text-gray); margin-top: 3px; font-family: 'JetBrains Mono'; }
-    .hist-amt { font-family: 'JetBrains Mono'; font-size: 13px; font-weight: 800; }
 
-    /* LOADING & LOGIN */
-    #loadingOverlay {
-      position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8);
-      display:none; align-items:center; justify-content:center; z-index:9999; font-weight:800; color: var(--dana-blue);
-    }
-    body.dark-mode #loadingOverlay { background: rgba(0,0,0,0.8); }
-    .login-container { padding: 60px 30px; text-align: center; }
-    .input-login { width: 100%; padding: 15px; margin-top: 25px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); text-align: center; font-family: 'JetBrains Mono'; font-size: 18px; box-sizing: border-box; background: transparent; color: inherit; }
+    #loader { position: fixed; inset: 0; background: var(--bg-container); opacity: 0.9; display: none; align-items: center; justify-content: center; z-index: 1000; font-weight: 800; color: var(--gold); }
   </style>
 </head>
-<body id="mainBody">
+<body data-theme="dark">
 
-<div id="loadingOverlay">MEMPROSES...</div>
+<div id="loader">MEMPROSES...</div>
 
-<!-- AREA LOGIN -->
-<div class="container" id="loginArea">
-  <div class="login-container">
-    <div style="font-size: 32px; color: var(--dana-blue); font-weight: 900; letter-spacing: -1px;">DANA<span style="color: var(--bozz-gold);">-BOZZ</span></div>
-    <p style="color: var(--text-gray); font-size: 11px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Member Access Plalangan.net</p>
-    <input type="text" id="memberId" class="input-login" placeholder="6281936999919">
-    <button onclick="loginMember()" style="background: var(--dana-blue); width: 100%; padding: 15px; border-radius: 12px; border: none; color: white; font-weight: 800; margin-top: 20px; cursor: pointer;">MASUK</button>
-  </div>
-</div>
+<div class="mobile-container">
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️</button>
 
-<!-- AREA DASHBOARD -->
-<div class="container" id="dashboardArea" style="display: none;">
-  <div class="dana-header">
-    <button class="dark-toggle" onclick="toggleDarkMode()" id="darkBtn">🌙</button>
-    
-    <!-- JUDUL TENGAH (BARU) -->
-    <div style="text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 900; letter-spacing: -1px; color: white;">
-        DANA<span style="color: var(--bozz-gold);">-BOZZ</span>
-    </div>
-
-    <div class="profile-top">
-      <div class="user-info">
-        <h2 id="userNama">---</h2>
-        <p>ID: <span id="userIdDisplay">---</span></p>
-      </div>
-      <div class="aktiv-pill">AKTIF: <span id="userAktivasi">--/--/--</span></div>
-    </div>
+  <div id="loginArea" style="padding: 100px 30px; text-align: center;">
+    <div class="brand" style="font-size: 32px; color: var(--primary);">PLALANGAN<span>.NET</span></div>
+    <input type="text" id="memberId" placeholder="ID Member / No HP" style="width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main); text-align: center; font-weight: 700; margin-bottom: 15px; box-sizing: border-box; outline: none;">
+    <button onclick="loginMember()" style="width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer;">MASUK</button>
   </div>
 
-  <div class="main-card">
-    <div class="label-saldo">Sisa Saldo Deposit</div>
-    <div id="userSaldo" class="nominal-saldo">Rp 0</div>
-    <div class="stats-row">
-      <div class="stat-item">
-        <div class="stat-label">Masuk</div>
-        <div id="totalMasuk" class="stat-val" style="color: var(--green-pay);">Rp 0</div>
+  <div id="dashboardArea" style="display: none;">
+    <div class="header">
+      <div class="brand">PLALANGAN<span>.NET</span></div>
+      <div style="text-align: center; font-weight: 700;">Halo, <span id="userNama">-</span></div>
+    </div>
+
+    <div class="voucher-card">
+      <div class="v-header">
+        <div class="v-label">WiFi Voucher Access</div>
+        <div id="userStatus" style="font-size: 9px; background: var(--success); color:white; padding: 4px 8px; border-radius: 8px; font-weight: 800;">AKTIF</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-label">Keluar</div>
-        <div id="totalKeluar" class="stat-val" style="color: var(--red-out);">Rp 0</div>
+      <div class="v-code-box">
+        <div class="v-label" style="text-align: center; margin-bottom: 5px; opacity: 0.6;">KODE VOUCHER ANDA</div>
+        <div id="voucherContainer" class="v-grid"></div>
+      </div>
+      <div class="v-footer">
+        <div><div class="v-label">Berlaku S/D</div><div id="userTempo" style="font-weight: 700; color: var(--gold);">--/--/--</div></div>
+        <div style="text-align: right;"><div class="v-label">ID Member</div><div id="userIdDisplay" style="font-weight: 700;">-</div></div>
       </div>
     </div>
-  </div>
 
-  <div class="action-section">
-    <div class="pay-grid">
-      <div class="input-box">
-        <label>Input Nominal Bayar</label>
-        <input type="number" id="inputNominal" class="input-nominal" placeholder="0" oninput="document.getElementById('btnBayar').disabled = !this.value">
+    <div class="info-grid">
+      <div class="info-item"><div class="v-label">Sisa Saldo</div><div id="userSaldo" class="info-val">Rp 0</div></div>
+      <div class="info-item"><div class="v-label">Akun/Paket</div><div class="info-val" style="color: var(--text-main);">Member</div></div>
+    </div>
+
+    <div class="v-label" style="padding: 0 25px 8px;">Bayar Tagihan</div>
+    <div class="pay-section">
+      <div class="pay-group">
+        <input type="number" id="inputNominal" class="pay-input" placeholder="Nominal...">
+        <button class="pay-btn" onclick="bayarSekarang()">BAYAR</button>
       </div>
-      <button id="btnBayar" class="btn-bayar" onclick="konfirmasiBayar()" disabled>BAYAR</button>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 10px;">
-        <span style="color: var(--text-gray);">Tempo: <b id="userTempo" style="color: var(--text-main);">--/--/--</b></span>
-        <span id="userStatus" style="font-weight: 800;">---</span>
+
+    <div class="report-grid">
+      <div class="report-item bg-in"><div class="v-label" style="color:white; opacity:0.8;">TOTAL TOPUP</div><div id="totalMasuk" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
+      <div class="report-item bg-out"><div class="v-label" style="color:white; opacity:0.8;">TOTAL BAYAR</div><div id="totalKeluar" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
     </div>
-  </div>
 
-  <div class="history-header">Riwayat Transaksi</div>
-  <div id="historyList" class="history-list"></div>
+    <div class="v-label" style="padding: 0 25px 8px;">Riwayat Transaksi</div>
+    <div class="history-list" id="historyList"></div>
 
-  <div style="text-align: center; padding: 40px 20px;">
-    <button onclick="logout()" style="background:none; border:none; color:var(--text-gray); font-size:10px; font-weight:800; letter-spacing:1px; cursor:pointer;">LOGOUT SYSTEM</button>
+    <div style="padding: 20px;">
+      <button onclick="logout()" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">KELUAR AKUN</button>
+    </div>
   </div>
 </div>
 
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztDF1wcmVwl83zX36sB_wvA3aq734USkzkoNwAxpf7AcM2JnCRbsihgRz1JPL3YqukYA/exec";
+  // GANTI DENGAN URL WEB APP ANDA YANG BARU SETELAH DEPLOY
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOVyJrBzw4mGHV4ip0ewWMfHqTi1JKkrN9Rp_VqM-kg-MGP4rNkNOYa10Ud4Q_ecV7jw/exec";
 
-  // 1. TEMA & SESI
-  function toggleDarkMode() {
-    const body = document.getElementById('mainBody');
-    const btn = document.getElementById('darkBtn');
-    body.classList.toggle('dark-mode');
-    const isDark = body.classList.contains('dark-mode');
-    btn.innerText = isDark ? "☀️" : "🌙";
-    localStorage.setItem('p-pay-theme', isDark ? 'dark' : 'light');
+  // LOGIKA THEME
+  function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('themeBtn');
+    const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    body.setAttribute('data-theme', newTheme);
+    btn.innerText = newTheme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('p-theme', newTheme);
   }
 
-  window.onload = () => {
-    if (localStorage.getItem('p-pay-theme') === 'dark') {
-      document.getElementById('mainBody').classList.add('dark-mode');
-      document.getElementById('darkBtn').innerText = "☀️";
-    }
-    const savedId = localStorage.getItem('p-pay-session');
-    if (savedId) {
-      document.getElementById('memberId').value = savedId;
-      loginMember(true);
-    }
-  };
-
-  // 2. FORMATTER
-  const bersihkanTgl = (tgl) => {
-    if (!tgl || tgl === "---") return "---";
-    const d = new Date(tgl);
-    return isNaN(d.getTime()) ? tgl : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-  };
-
-  const formatWaktuRiwayat = (isoString) => {
-    if (!isoString) return "---";
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return isoString;
-    const tgl = String(d.getDate()).padStart(2, '0');
-    const bln = String(d.getMonth() + 1).padStart(2, '0');
-    const jam = String(d.getHours()).padStart(2, '0');
-    const mnt = String(d.getMinutes()).padStart(2, '0');
-    return `${tgl}/${bln}/${d.getFullYear()} ${jam}:${mnt}`;
-  };
-
-  // 3. LOGIKA CORE
+  // LOGIN & AMBIL DATA
   async function loginMember(isAuto = false) {
-    const id = document.getElementById('memberId').value.toUpperCase();
-    if(!id) return;
-    if(!isAuto) document.getElementById('loadingOverlay').style.display = 'flex';
+    const idInput = document.getElementById('memberId').value;
+    if(!idInput) return;
+    const id = idInput.toUpperCase().trim();
 
+    document.getElementById('loader').style.display = 'flex';
     try {
       const response = await fetch(`${WEB_APP_URL}?action=GET_DATA&id=${id}`);
       const res = await response.json();
-      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('loader').style.display = 'none';
 
       if(res.success) {
         localStorage.setItem('p-pay-session', id);
         document.getElementById('loginArea').style.display = 'none';
         document.getElementById('dashboardArea').style.display = 'block';
-        document.getElementById('userNama').innerText = res.data.nama;
-        document.getElementById('userIdDisplay').innerText = id;
-        document.getElementById('userAktivasi').innerText = bersihkanTgl(res.data.aktivasi);
-        document.getElementById('userTempo').innerText = bersihkanTgl(res.data.tempo);
-        document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
         
-        let masuk = 0, keluar = 0;
-        if(res.logs) {
-          res.logs.forEach(l => { if(l.tipe === 'TOPUP') masuk += l.nominal; else keluar += l.nominal; });
-          document.getElementById('totalMasuk').innerText = "Rp " + masuk.toLocaleString('id-ID');
-          document.getElementById('totalKeluar').innerText = "Rp " + keluar.toLocaleString('id-ID');
-          document.getElementById('historyList').innerHTML = res.logs.map(log => `
-            <div class="history-item">
-              <div><div class="hist-desc">${log.ket}</div><div class="hist-date">${formatWaktuRiwayat(log.tgl)}</div></div>
-              <div class="hist-amt" style="color: ${log.tipe === 'TOPUP' ? 'var(--green-pay)' : 'var(--red-out)'}">${log.tipe === 'TOPUP' ? '+' : '-'}${log.nominal.toLocaleString('id-ID')}</div>
-            </div>`).join('');
+        document.getElementById('userNama').innerText = res.data.nama;
+        document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
+        document.getElementById('userIdDisplay').innerText = id;
+        document.getElementById('userTempo').innerText = res.data.tempo || "--/--/--";
+
+        // Render Voucher
+        const vContainer = document.getElementById('voucherContainer');
+        const aktivasiData = String(res.data.aktivasi || ""); 
+        if (aktivasiData.includes("#")) {
+          vContainer.innerHTML = aktivasiData.split("#").map(c => `<div class="v-code">${c.trim()}</div>`).join('');
+        } else {
+          vContainer.innerHTML = `<div class="v-code" style="grid-column: span 2;">${aktivasiData || "BELUM AKTIF"}</div>`;
         }
-        const st = document.getElementById('userStatus');
-        st.innerText = res.data.status;
-        st.style.color = res.data.status === 'AKTIF' ? 'var(--green-pay)' : 'var(--red-out)';
-      } else { if(!isAuto) alert("ID Tidak Ada!"); logout(); }
-    } catch(e) { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+        // Render Log
+        let masuk = 0, keluar = 0, logHtml = "";
+        if(res.logs) {
+          res.logs.forEach(l => {
+            const nominal = Number(l.nominal) || 0;
+            if(l.tipe === "TOPUP") masuk += nominal; else keluar += nominal;
+            logHtml += `
+              <div class="history-item">
+                <div><div style="font-weight:700;font-size:12px;">${l.ket}</div><div style="font-size:9px;color:var(--text-muted);">${l.tgl}</div></div>
+                <div style="font-family:'JetBrains Mono';font-weight:800;font-size:12px;color:${l.tipe==='TOPUP'?'#22C55E':'#EF4444'}">
+                  ${l.tipe==='TOPUP'?'+':'-'}${nominal.toLocaleString('id-ID')}
+                </div>
+              </div>`;
+          });
+        }
+        document.getElementById('totalMasuk').innerText = "Rp " + masuk.toLocaleString('id-ID');
+        document.getElementById('totalKeluar').innerText = "Rp " + keluar.toLocaleString('id-ID');
+        document.getElementById('historyList').innerHTML = logHtml;
+
+      } else if(!isAuto) { alert("ID Tidak Ditemukan!"); }
+    } catch(e) { document.getElementById('loader').style.display = 'none'; }
   }
 
-  async function konfirmasiBayar() {
-    const id = document.getElementById('userIdDisplay').innerText;
-    const nominal = parseInt(document.getElementById('inputNominal').value);
-    const saldoSekarang = parseInt(document.getElementById('userSaldo').innerText.replace(/[^0-9]/g, ''));
-    if (nominal > saldoSekarang) return alert("Saldo Kurang!");
-    
-    if (confirm(`Bayar Rp ${nominal.toLocaleString('id-ID')}?`)) {
-      document.getElementById('loadingOverlay').style.display = 'flex';
-      try {
-        const resp = await fetch(WEB_APP_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "POTONG", idMember: id, nominal: nominal, keterangan: "BAYAR WIFI" })
-        });
-        if (await resp.text() === "Sukses") { 
-          alert("SUKSES!"); 
-          loginMember(true); // Update data tanpa logout
-          document.getElementById('inputNominal').value = "";
-        }
-      } catch (e) { alert("Gagal!"); }
-      document.getElementById('loadingOverlay').style.display = 'none';
+  // FUNGSI BAYAR (BARU DISISIPKAN)
+  async function bayarSekarang() {
+    const id = localStorage.getItem('p-pay-session');
+    const nominalInput = document.getElementById('inputNominal');
+    const nominal = parseInt(nominalInput.value);
+
+    if (!nominal || nominal <= 0) {
+      alert("Masukkan nominal pembayaran!");
+      return;
+    }
+
+    if (!confirm(`Konfirmasi pembayaran sebesar Rp ${nominal.toLocaleString('id-ID')}?`)) return;
+
+    document.getElementById('loader').style.display = 'flex';
+    try {
+      const response = await fetch(`${WEB_APP_URL}?action=POTONG_SALDO&id=${id}&nominal=${nominal}`);
+      const res = await response.json();
+      
+      document.getElementById('loader').style.display = 'none';
+      if (res.success) {
+        alert("Pembayaran Berhasil!");
+        nominalInput.value = "";
+        loginMember(true); // Refresh data dashboard
+      } else {
+        alert("Gagal: " + res.msg);
+      }
+    } catch (e) {
+      document.getElementById('loader').style.display = 'none';
+      alert("Terjadi kesalahan koneksi!");
     }
   }
 
   function logout() { localStorage.removeItem('p-pay-session'); location.reload(); }
+
+  window.onload = () => {
+    // Restore Theme
+    const savedTheme = localStorage.getItem('p-theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeBtn').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    // Auto Login
+    const savedId = localStorage.getItem('p-pay-session');
+    if(savedId) { 
+      document.getElementById('memberId').value = savedId; 
+      loginMember(true); 
+    }
+  };
 </script>
 </body>
 </html>
