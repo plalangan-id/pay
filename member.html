@@ -119,13 +119,23 @@
     }
     .pay-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
-    /* HISTORY */
+    /* HISTORY WITH SCROLL */
     .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 25px; }
     .report-item { padding: 12px; border-radius: 15px; color: white; }
     .bg-in { background: var(--success); }
     .bg-out { background: var(--danger); }
     
-    .history-list { padding: 0 20px; }
+    /* MODIFIKASI SCROLL DISINI */
+    .history-container { 
+      margin: 0 20px; 
+      max-height: 250px; /* Batas tinggi kotak riwayat */
+      overflow-y: auto;  /* Aktifkan scroll vertikal */
+      padding-right: 5px;
+    }
+    /* Mempercantik Scrollbar */
+    .history-container::-webkit-scrollbar { width: 4px; }
+    .history-container::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 10px; }
+
     .history-item { 
       background: var(--card-bg); padding: 12px 15px; border-radius: 15px; 
       display: flex; justify-content: space-between; align-items: center; 
@@ -183,12 +193,14 @@
     </div>
 
     <div class="report-grid">
-      <div class="report-item bg-in"><div class="v-label" style="color:white; opacity:0.8;">TOTAL TOPUP</div><div id="totalMasuk" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
-      <div class="report-item bg-out"><div class="v-label" style="color:white; opacity:0.8;">TOTAL BAYAR</div><div id="totalKeluar" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
+      <div class="report-item bg-in"><div class="v-label" style="color:white; opacity:0.8;">UANG MASUK</div><div id="totalMasuk" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
+      <div class="report-item bg-out"><div class="v-label" style="color:white; opacity:0.8;">UANG KELUAR</div><div id="totalKeluar" style="font-family:'JetBrains Mono'; font-weight:800;">Rp 0</div></div>
     </div>
 
     <div class="v-label" style="padding: 0 25px 8px;">Riwayat Transaksi</div>
-    <div class="history-list" id="historyList"></div>
+    <div class="history-container">
+      <div id="historyList"></div>
+    </div>
 
     <div style="padding: 20px;">
       <button onclick="logout()" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">KELUAR AKUN</button>
@@ -197,10 +209,8 @@
 </div>
 
 <script>
-  // GANTI DENGAN URL WEB APP ANDA YANG BARU SETELAH DEPLOY
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOVyJrBzw4mGHV4ip0ewWMfHqTi1JKkrN9Rp_VqM-kg-MGP4rNkNOYa10Ud4Q_ecV7jw/exec";
 
-  // LOGIKA THEME
   function toggleTheme() {
     const body = document.body;
     const btn = document.getElementById('themeBtn');
@@ -210,7 +220,6 @@
     localStorage.setItem('p-theme', newTheme);
   }
 
-  // LOGIN & AMBIL DATA
   async function loginMember(isAuto = false) {
     const idInput = document.getElementById('memberId').value;
     if(!idInput) return;
@@ -232,7 +241,6 @@
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userTempo').innerText = res.data.tempo || "--/--/--";
 
-        // Render Voucher
         const vContainer = document.getElementById('voucherContainer');
         const aktivasiData = String(res.data.aktivasi || ""); 
         if (aktivasiData.includes("#")) {
@@ -241,7 +249,6 @@
           vContainer.innerHTML = `<div class="v-code" style="grid-column: span 2;">${aktivasiData || "BELUM AKTIF"}</div>`;
         }
 
-        // Render Log
         let masuk = 0, keluar = 0, logHtml = "";
         if(res.logs) {
           res.logs.forEach(l => {
@@ -258,13 +265,12 @@
         }
         document.getElementById('totalMasuk').innerText = "Rp " + masuk.toLocaleString('id-ID');
         document.getElementById('totalKeluar').innerText = "Rp " + keluar.toLocaleString('id-ID');
-        document.getElementById('historyList').innerHTML = logHtml;
+        document.getElementById('historyList').innerHTML = logHtml || '<div style="text-align:center; opacity:0.5; font-size:12px;">Belum ada riwayat</div>';
 
       } else if(!isAuto) { alert("ID Tidak Ditemukan!"); }
     } catch(e) { document.getElementById('loader').style.display = 'none'; }
   }
 
-  // FUNGSI BAYAR (BARU DISISIPKAN)
   async function bayarSekarang() {
     const id = localStorage.getItem('p-pay-session');
     const nominalInput = document.getElementById('inputNominal');
@@ -286,7 +292,7 @@
       if (res.success) {
         alert("Pembayaran Berhasil!");
         nominalInput.value = "";
-        loginMember(true); // Refresh data dashboard
+        loginMember(true);
       } else {
         alert("Gagal: " + res.msg);
       }
@@ -299,12 +305,10 @@
   function logout() { localStorage.removeItem('p-pay-session'); location.reload(); }
 
   window.onload = () => {
-    // Restore Theme
     const savedTheme = localStorage.getItem('p-theme') || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
     document.getElementById('themeBtn').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
 
-    // Auto Login
     const savedId = localStorage.getItem('p-pay-session');
     if(savedId) { 
       document.getElementById('memberId').value = savedId; 
