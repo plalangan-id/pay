@@ -70,20 +70,18 @@
     .btn-potong { background: var(--red); }
     button:disabled { opacity: 0.5; }
 
-/* Versi Mewah dengan Scroll Box */
     .table-container { 
       margin-top: 25px; 
       overflow-x: auto; 
-      max-height: 500px; /* Tabel tidak akan lebih tinggi dari ini, sisanya di-scroll */
+      max-height: 500px; 
       overflow-y: auto; 
       border-radius: 16px;
       border: 1px solid #222;
-      background: rgba(255, 255, 255, 0.02); /* Efek kaca tipis */
-      scrollbar-width: thin; /* Untuk browser Firefox */
+      background: rgba(255, 255, 255, 0.02); 
+      scrollbar-width: thin; 
       scrollbar-color: var(--primary-gold) #111;
     }
 
-    /* Gaya Scrollbar untuk Chrome/Safari */
     .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
     .table-container::-webkit-scrollbar-track { background: #111; }
     .table-container::-webkit-scrollbar-thumb { background: var(--primary-gold); border-radius: 10px; }
@@ -91,7 +89,7 @@
     table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
     
     th { 
-      position: sticky; top: 0; /* Header tetap terlihat saat di-scroll */
+      position: sticky; top: 0; 
       background: #1a1a1a; 
       text-align: left; padding: 15px; 
       color: var(--text-gray); 
@@ -107,9 +105,8 @@
       vertical-align: middle;
     }
 
-    /* Baris selang-seling agar mudah dibaca */
     tr:nth-child(even) { background: rgba(255, 255, 255, 0.01); }
-    tr:hover { background: rgba(243, 156, 18, 0.05); } /* Efek sorot saat kursor di atasnya */
+    tr:hover { background: rgba(243, 156, 18, 0.05); } 
     
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; }
     .badge-topup { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; }
@@ -170,7 +167,7 @@
           <tr>
             <th>WAKTU</th>
             <th>ID</th>
-            <th>NAMA MEMBER</th> <!-- Kolom Baru -->
+            <th>NAMA MEMBER</th> 
             <th>TIPE</th>
             <th>NOMINAL</th>
             <th>KETERANGAN</th>
@@ -185,7 +182,8 @@
 </div>
 
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjoLOJeBiI_0CXHUxTYSSFaM806HZ6qWSG1owN4liacbKujdJvISTaYy28F2jlTR7GAw/exec";
+  // PASTIKAN URL WEB APP SESUAI DENGAN DEPLOYMENT GS TERBARU ANDA
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOVyJrBzw4mGHV4ip0ewWMfHqTi1JKkrN9Rp_VqM-kg-MGP4rNkNOYa10Ud4Q_ecV7jw/exec";
 
   window.onload = loadStats;
 
@@ -194,29 +192,38 @@
       const response = await fetch(`${WEB_APP_URL}?action=GET_STATS`);
       const res = await response.json();
       if (res.success) {
-        document.getElementById('statHariIni').innerText = "Rp " + res.totalHariIni.toLocaleString();
-        document.getElementById('statBulanIni').innerText = "Rp " + res.totalBulanIni.toLocaleString();
-        document.getElementById('statDeposit').innerText = "Rp " + res.totalDeposit.toLocaleString();
+        document.getElementById('statHariIni').innerText = "Rp " + res.totalHariIni.toLocaleString('id-ID');
+        document.getElementById('statBulanIni').innerText = "Rp " + res.totalBulanIni.toLocaleString('id-ID');
+        document.getElementById('statDeposit').innerText = "Rp " + res.totalDeposit.toLocaleString('id-ID');
         
         const tableBody = document.getElementById('logTableBody');
         tableBody.innerHTML = '';
-        res.globalLogs.forEach(log => {
-          const row = `
-            <tr>
-              <td style="color: #666;">${log.tgl}</td>
-              <td style="font-weight: 700; color: var(--blue);">${log.id}</td>
-              <td style="font-weight: 600; color: #fff;">${log.nama || '-'}</td> <!-- Menampilkan Nama -->
-              <td><span class="badge ${log.tipe === 'TOPUP' ? 'badge-topup' : 'badge-potong'}">${log.tipe}</span></td>
-              <td style="font-weight: 600; color: ${log.tipe === 'TOPUP' ? '#2ecc71' : '#e74c3c'}">
-                ${log.tipe === 'TOPUP' ? '+' : '-'} Rp ${log.nominal.toLocaleString()}
-              </td>
-              <td style="color: #666;">${log.ket}</td>
-            </tr>
-          `;
-          tableBody.innerHTML += row;
-        });
+        
+        // SINKRONISASI: Menggunakan 'res.logs' sesuai output dari kode GS baru
+        if (res.logs && res.logs.length > 0) {
+          res.logs.forEach(log => {
+            const row = `
+              <tr>
+                <td style="color: #666;">${log.tgl}</td>
+                <td style="font-weight: 700; color: var(--blue);">${log.idMember}</td>
+                <td style="font-weight: 600; color: #fff;">${log.nama || '-'}</td>
+                <td><span class="badge ${log.tipe === 'TOPUP' ? 'badge-topup' : 'badge-potong'}">${log.tipe}</span></td>
+                <td style="font-weight: 600; color: ${log.tipe === 'TOPUP' ? '#2ecc71' : '#e74c3c'}">
+                  ${log.tipe === 'TOPUP' ? '+' : '-'} Rp ${log.nominal.toLocaleString('id-ID')}
+                </td>
+                <td style="color: #bbbbbb;">${log.ket}</td>
+              </tr>
+            `;
+            tableBody.innerHTML += row;
+          });
+        } else {
+          tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#666;">Belum ada riwayat transaksi global</td></tr>';
+        }
       }
-    } catch (e) { console.error("Gagal memuat data stats."); }
+    } catch (e) { 
+      console.error("Gagal memuat data stats."); 
+      document.getElementById('logTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--red);">Gagal mengambil data dari server.</td></tr>';
+    }
   }
 
   async function kirimData(tipe) {
@@ -244,8 +251,14 @@
       msgBox.style.backgroundColor = tipe === 'TOPUP' ? '#064e3b' : '#7f1d1d';
       
       setTimeout(() => {
-        if(tipe === 'TOPUP') { document.getElementById('topupNominal').value = ""; }
-        else { document.getElementById('potongNominal').value = ""; document.getElementById('potongKet').value = ""; }
+        if(tipe === 'TOPUP') { 
+          document.getElementById('topupId').value = "";
+          document.getElementById('topupNominal').value = ""; 
+        } else { 
+          document.getElementById('potongId').value = "";
+          document.getElementById('potongNominal').value = ""; 
+          document.getElementById('potongKet').value = ""; 
+        }
         msgBox.style.display = 'none';
         loadStats();
       }, 2000);
