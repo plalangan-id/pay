@@ -187,6 +187,25 @@
 
   window.onload = loadStats;
 
+  // SISIPAN: Fungsi pembaca format waktu ISO dunia ke waktu lokal Indonesia
+  function formatWaktuLokal(waktuMentah) {
+    if (!waktuMentah) return "-";
+    if (typeof waktuMentah === 'string' && waktuMentah.includes('T')) {
+      try {
+        const d = new Date(waktuMentah);
+        if (!isNaN(d.getTime())) {
+          const tgl = String(d.getDate()).padStart(2, '0');
+          const bln = String(d.getMonth() + 1).padStart(2, '0');
+          const thn = d.getFullYear();
+          const jam = String(d.getHours()).padStart(2, '0');
+          const mnt = String(d.getMinutes()).padStart(2, '0');
+          return `${tgl}/${bln}/${thn} ${jam}:${mnt}`;
+        }
+      } catch (e) { }
+    }
+    return waktuMentah;
+  }
+
   async function loadStats() {
     try {
       const response = await fetch(`${WEB_APP_URL}?action=GET_STATS`);
@@ -202,9 +221,12 @@
         // SINKRONISASI: Menggunakan 'res.logs' sesuai output dari kode GS baru
         if (res.logs && res.logs.length > 0) {
           res.logs.forEach(log => {
+            // SISIPAN: Waktu yang lewat diproses dulu ke fungsi lokal
+            const tglTampil = formatWaktuLokal(log.tgl);
+
             const row = `
               <tr>
-                <td style="color: #666;">${log.tgl}</td>
+                <td style="color: #666;">${tglTampil}</td>
                 <td style="font-weight: 700; color: var(--blue);">${log.idMember}</td>
                 <td style="font-weight: 600; color: #fff;">${log.nama || '-'}</td>
                 <td><span class="badge ${log.tipe === 'TOPUP' ? 'badge-topup' : 'badge-potong'}">${log.tipe}</span></td>
