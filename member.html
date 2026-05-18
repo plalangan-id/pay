@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MOBILE BILLING | PLALANGAN.NET</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Roboto:wght@700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Roboto:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #0085FF;
@@ -115,7 +115,7 @@
     .pay-group { display: flex; gap: 10px; }
     .pay-input { 
       flex: 1; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main);
-      padding: 12px; border-radius: 12px; font-family: 'JetBrains Mono'; font-weight: 700; outline: none; 
+      padding: 12px; border-radius: 12px; font-family: 'Roboto'; font-weight: 700; outline: none; 
     }
     .pay-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
@@ -125,14 +125,12 @@
     .bg-in { background: var(--success); }
     .bg-out { background: var(--danger); }
     
-    /* MODIFIKASI SCROLL DISINI */
     .history-container { 
       margin: 0 20px; 
-      max-height: 250px; /* Batas tinggi kotak riwayat */
-      overflow-y: auto;  /* Aktifkan scroll vertikal */
+      max-height: 250px; 
+      overflow-y: auto;  
       padding-right: 5px;
     }
-    /* Mempercantik Scrollbar */
     .history-container::-webkit-scrollbar { width: 4px; }
     .history-container::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 10px; }
 
@@ -152,35 +150,28 @@
 <div class="mobile-container">
   <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️</button>
 
-<div id="loginArea" style="padding: 60px 25px; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    
+  <div id="loginArea" style="padding: 60px 25px; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
     <div class="brand" style="font-size: 38px; letter-spacing: 2px; margin-bottom: 5px; color: #FFB800; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; text-shadow: 0 4px 12px rgba(255, 184, 0, 0.2);">
       PLALANGAN<span style="color: #FFFFFF; text-shadow: none;">.NET</span>
     </div>
     <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted); font-weight: 700; margin-bottom: 50px;">
-      DASHBOARD TRANSAKSI MEMBER
+      MEMBER BILLING HUB
     </div>
 
     <div style="background: var(--card-bg); width: 100%; padding: 30px 25px; border-radius: 25px; border: 1px solid rgba(255,184,0,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.4); box-sizing: border-box;">
-      
       <div style="text-align: left; margin-bottom: 18px;">
         <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700;">Silahkan Masuk</label>
       </div>
-
-      <input type="text" id="memberId" placeholder="ID Member / No HP" 
-        style="width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--input-border); background: var(--v-box-bg); color: var(--text-main); text-align: center; font-family: 'Roboto', monospace; font-size: 15px; font-weight: 700; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: all 0.3s ease;">
-      
+      <input type="text" id="memberId" placeholder="Masukkan ID Member / No HP" 
+        style="width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--input-border); background: var(--v-box-bg); color: var(--text-main); text-align: center; font-family: 'Roboto', monospace; font-size: 15px; font-weight: 700; margin-bottom: 20px; box-sizing: border-box; outline: none;">
       <button onclick="loginMember()" 
-        style="width: 100%; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(135deg, #0085FF 0%, #0046E2 100%); color: white; font-size: 15px; font-weight: 800; letter-spacing: 1px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,133,255,0.3); transition: transform 0.2s;">
+        style="width: 100%; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(135deg, #0085FF 0%, #0046E2 100%); color: white; font-size: 15px; font-weight: 800; letter-spacing: 1px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,133,255,0.3);">
         LOGIN
       </button>
-
     </div>
-
     <div style="margin-top: 50px; font-size: 11px; color: var(--text-muted); opacity: 0.5; letter-spacing: 1px;">
       Secure Connection &copy; 2026 PLALANGAN.NET
     </div>
-
   </div>
 
   <div id="dashboardArea" style="display: none;">
@@ -194,10 +185,16 @@
         <div class="v-label">WiFi Voucher Access</div>
         <div id="userStatus" style="font-size: 9px; background: var(--success); color:white; padding: 4px 8px; border-radius: 8px; font-weight: 800;">AKTIF</div>
       </div>
+      
       <div class="v-code-box">
-        <div class="v-label" style="text-align: center; margin-bottom: 5px; opacity: 0.6;">KODE VOUCHER ANDA</div>
-        <div id="voucherContainer" class="v-grid"></div>
+        <div class="v-label" style="text-align: center; margin-bottom: 5px; opacity: 0.6;">KODE VOUCHER ANDA (KLIK UNTUK SALIN)</div>
+        <div class="v-code" style="display: flex; align-items: center; width: 100%; box-sizing: border-box; padding: 12px 10px; background: rgba(255, 184, 0, 0.07);">
+          <span id="vUser" onclick="salinVoucher(this)" style="cursor:pointer; flex: 1; text-align: center; font-family: 'Roboto', monospace; color: var(--gold); font-size: 16px; font-weight: 800;" title="Klik untuk salin">-</span>
+          <div style="width: 1px; height: 16px; background: var(--input-border); margin: 0 10px; flex-shrink: 0;"></div>
+          <span id="vPass" onclick="salinVoucher(this)" style="cursor:pointer; flex: 1; text-align: center; font-family: 'Roboto', monospace; color: var(--gold); font-size: 16px; font-weight: 800;" title="Klik untuk salin">-</span>
+        </div>
       </div>
+      
       <div class="v-footer">
         <div><div class="v-label">Berlaku S/D</div><div id="userTempo" style="font-weight: 700; color: var(--gold);">--/--/--</div></div>
         <div style="text-align: right;"><div class="v-label">ID Member</div><div id="userIdDisplay" style="font-weight: 700;">-</div></div>
@@ -206,7 +203,14 @@
 
     <div class="info-grid">
       <div class="info-item"><div class="v-label">Sisa Saldo</div><div id="userSaldo" class="info-val">Rp 0</div></div>
-      <div class="info-item"><div class="v-label">Akun/Paket</div><div class="info-val" style="color: var(--text-main);">Member</div></div>
+      <div class="info-item">
+        <div class="v-label">Paket | Total Bayar</div>
+        <div id="userPaket" style="display: flex; align-items: center; width: 100%; margin-top: 5px; font-size: 14px; font-weight: 800;">
+          <span id="paketNama" style="color: var(--text-main); white-space: nowrap; flex-shrink: 0;">-</span>
+          <div style="width: 1px; height: 14px; background: var(--input-border); margin: 0 10px; flex-shrink: 0;"></div>
+          <span id="paketHarga" style="color: var(--gold); flex-grow: 1; text-align: left; word-break: break-all;">-</span>
+        </div>
+      </div>
     </div>
 
     <div class="v-label" style="padding: 0 25px 8px;">Bayar Tagihan</div>
@@ -227,14 +231,19 @@
       <div id="historyList"></div>
     </div>
 
-    <div style="padding: 20px;">
+    <div style="padding: 20px 20px 0;">
+      <button onclick="hubungiAdmin()" style="width: 100%; background: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        💬 HUBUNGI ADMIN (WA)
+      </button>
+    </div>
+    <div style="padding: 10px 20px 20px;">
       <button onclick="logout()" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">KELUAR / LOGOUT</button>
     </div>
   </div>
 </div>
 
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCxRuXQiiqS1fnnH2ml9QX1pqquYNc-rFHyyxAeemaaa-cIQT7i56NRTE4EfnraQ9zSQ/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqSXzQE0DeIzt2Qr6VGHhFFf48TTUGBRfuVQ7XUNv5N90SmS6owc2jV2_SLQ8T3VEYBQ/exec";
 
   function toggleTheme() {
     const body = document.body;
@@ -245,7 +254,6 @@
     localStorage.setItem('p-theme', newTheme);
   }
 
-  // SISIPAN: Fungsi pembaca format waktu ISO dunia ke waktu lokal Indonesia dd/MM/yyyy HH:mm
   function formatWaktuLokal(waktuMentah) {
     if (!waktuMentah) return "-";
     if (typeof waktuMentah === 'string' && waktuMentah.includes('T')) {
@@ -284,13 +292,30 @@
         document.getElementById('userSaldo').innerText = "Rp " + res.data.saldo.toLocaleString('id-ID');
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userTempo').innerText = res.data.tempo || "--/--/--";
-
-        const vContainer = document.getElementById('voucherContainer');
-        const aktivasiData = String(res.data.aktivasi || ""); 
-        if (aktivasiData.includes("#")) {
-          vContainer.innerHTML = aktivasiData.split("#").map(c => `<div class="v-code">${c.trim()}</div>`).join('');
+        
+        // LOGIKA SPLIT DATA KOLOM G (PAKET)
+        const paketRaw = res.data.paket || "Member - -";
+        if (paketRaw.includes("-")) {
+          const parts = paketRaw.split("-");
+          document.getElementById('paketNama').innerText = parts[0].trim();
+          document.getElementById('paketHarga').innerText = parts[1].trim();
         } else {
-          vContainer.innerHTML = `<div class="v-code" style="grid-column: span 2;">${aktivasiData || "BELUM AKTIF"}</div>`;
+          document.getElementById('paketNama').innerText = paketRaw;
+          document.getElementById('paketHarga').innerText = "";
+        }
+
+        // LOGIKA SPLIT DATA VOUCHER KOLOM E (AKTIVASI)
+        const aktivasiData = String(res.data.aktivasi || "").trim();
+        if (aktivasiData === "" || aktivasiData.toUpperCase() === "BELUM AKTIF") {
+          document.getElementById('vUser').innerText = "BELUM AKTIF";
+          document.getElementById('vPass').innerText = "-";
+        } else if (aktivasiData.includes("-")) {
+          const vParts = aktivasiData.split("-");
+          document.getElementById('vUser').innerText = vParts[0].trim();
+          document.getElementById('vPass').innerText = vParts[1].trim();
+        } else {
+          document.getElementById('vUser').innerText = aktivasiData;
+          document.getElementById('vPass').innerText = "-";
         }
 
         let masuk = 0, keluar = 0, logHtml = "";
@@ -299,7 +324,6 @@
             const nominal = Number(l.nominal) || 0;
             if(l.tipe === "TOPUP") masuk += nominal; else keluar += nominal;
             
-            // SISIPAN: Mengubah format tanggal mentah pada riwayat transaksi member
             const tglTampil = formatWaktuLokal(l.tgl);
 
             logHtml += `
@@ -317,6 +341,32 @@
 
       } else if(!isAuto) { alert("ID Tidak Ditemukan!"); }
     } catch(e) { document.getElementById('loader').style.display = 'none'; }
+  }
+
+  function salinVoucher(element) {
+    const teksVoucher = element.innerText;
+    if (teksVoucher === "BELUM AKTIF" || teksVoucher === "" || teksVoucher === "-") return;
+    
+    navigator.clipboard.writeText(teksVoucher).then(() => {
+      alert(`Berhasil disalin: "${teksVoucher}"`);
+    }).catch(() => {
+      const inputPalsu = document.createElement("input");
+      inputPalsu.value = teksVoucher;
+      document.body.appendChild(inputPalsu);
+      inputPalsu.select();
+      document.execCommand("copy");
+      document.body.removeChild(inputPalsu);
+      alert(`Berhasil disalin: "${teksVoucher}"`);
+    });
+  }
+
+  function hubungiAdmin() {
+    const idMember = localStorage.getItem('p-pay-session') || "-";
+    const namaMember = document.getElementById('userNama').innerText || "-";
+    const nomorAdmin = "6281936999919";
+    
+    const teksPesan = encodeURIComponent(`Halo Admin PLALANGAN.NET,\nSaya member dengan ID: ${idMember}\nAtas nama: ${namaMember}\nIngin mengonfirmasi / melaporkan kendala...`);
+    window.open(`https://wa.me/${nomorAdmin}?text=${teksPesan}`, '_blank');
   }
 
   async function bayarSekarang() {
