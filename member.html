@@ -112,10 +112,20 @@
     .info-val { font-size: 16px; font-weight: 800; color: var(--gold); margin-top: 5px; }
 
     .pay-section { margin: 0 20px 25px; background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--input-border); }
+    
+    /* STYLE BARU: Desain Tombol Nominal Cepat */
+    .quick-pay-container { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
+    .quick-btn { 
+      flex: 1; background: var(--v-box-bg); border: 1px solid var(--input-border); 
+      color: var(--text-main); padding: 8px 0; border-radius: 10px; 
+      font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+    }
+    .quick-btn:active { background: rgba(255, 184, 0, 0.15); border-color: var(--gold); color: var(--gold); }
+
     .pay-group { display: flex; gap: 10px; }
     .pay-input { 
       flex: 1; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-main);
-      padding: 12px; border-radius: 12px; font-family: 'Roboto'; font-weight: 700; outline: none; 
+      padding: 12px; border-radius: 12px; font-family: 'JetBrains Mono'; font-weight: 700; outline: none; 
     }
     .pay-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
 
@@ -162,11 +172,11 @@
       <div style="text-align: left; margin-bottom: 18px;">
         <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700;">Silahkan Masuk</label>
       </div>
-      <input type="text" id="memberId" placeholder="ID Member / No HP" 
-        style="width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--input-border); background: var(--v-box-bg); color: var(--text-main); text-align: center; font-family: 'Roboto', monospace; font-size: 15px; font-weight: 700; margin-bottom: 20px; box-sizing: border-box; outline: none;">
+      <input type="text" id="memberId" placeholder="Masukkan ID Member / No HP" 
+        style="width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--input-border); background: var(--v-box-bg); color: var(--text-main); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; margin-bottom: 20px; box-sizing: border-box; outline: none;">
       <button onclick="loginMember()" 
         style="width: 100%; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(135deg, #0085FF 0%, #0046E2 100%); color: white; font-size: 15px; font-weight: 800; letter-spacing: 1px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,133,255,0.3);">
-        LOGIN
+        MASUK KE DASHBOARD
       </button>
     </div>
     <div style="margin-top: 50px; font-size: 11px; color: var(--text-muted); opacity: 0.5; letter-spacing: 1px;">
@@ -215,6 +225,13 @@
 
     <div class="v-label" style="padding: 0 25px 8px;">Bayar Tagihan</div>
     <div class="pay-section">
+      <div class="quick-pay-container">
+        <button class="quick-btn" onclick="isiNominalCepat(15000)">1P</button>
+        <button class="quick-btn" onclick="isiNominalCepat(30000)">2P</button>
+        <button class="quick-btn" onclick="isiNominalCepat(45000)">3P</button>
+        <button class="quick-btn" onclick="isiNominalCepat(60000)">4P</button>
+        <button class="quick-btn" onclick="isiNominalCepat(75000)">5P</button>
+      </div>
       <div class="pay-group">
         <input type="number" id="inputNominal" class="pay-input" placeholder="Nominal...">
         <button class="pay-btn" onclick="bayarSekarang()">BAYAR</button>
@@ -237,7 +254,7 @@
       </button>
     </div>
     <div style="padding: 10px 20px 20px;">
-      <button onclick="logout()" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">KELUAR / LOGOUT</button>
+      <button onclick="logout()" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">KELUAR AKUN</button>
     </div>
   </div>
 </div>
@@ -252,6 +269,11 @@
     body.setAttribute('data-theme', newTheme);
     btn.innerText = newTheme === 'dark' ? '☀️' : '🌙';
     localStorage.setItem('p-theme', newTheme);
+  }
+
+  /* BARU: Fungsi Pengisian Nominal Otomatis Saat Tombol Cepat Diklik */
+  function isiNominalCepat(angka) {
+    document.getElementById('inputNominal').value = angka;
   }
 
   function formatWaktuLokal(waktuMentah) {
@@ -293,7 +315,6 @@
         document.getElementById('userIdDisplay').innerText = id;
         document.getElementById('userTempo').innerText = res.data.tempo || "--/--/--";
         
-        // LOGIKA SPLIT DATA KOLOM G (PAKET)
         const paketRaw = res.data.paket || "Member - -";
         if (paketRaw.includes("-")) {
           const parts = paketRaw.split("-");
@@ -304,7 +325,6 @@
           document.getElementById('paketHarga').innerText = "";
         }
 
-        // LOGIKA SPLIT DATA VOUCHER KOLOM E (AKTIVASI)
         const aktivasiData = String(res.data.aktivasi || "").trim();
         if (aktivasiData === "" || aktivasiData.toUpperCase() === "BELUM AKTIF") {
           document.getElementById('vUser').innerText = "BELUM AKTIF";
@@ -363,7 +383,7 @@
   function hubungiAdmin() {
     const idMember = localStorage.getItem('p-pay-session') || "-";
     const namaMember = document.getElementById('userNama').innerText || "-";
-    const nomorAdmin = "6281936999919";
+    const nomorAdmin = "6282245218491";
     
     const teksPesan = encodeURIComponent(`Halo Admin PLALANGAN.NET,\nSaya member dengan ID: ${idMember}\nAtas nama: ${namaMember}\nIngin mengonfirmasi / melaporkan kendala...`);
     window.open(`https://wa.me/${nomorAdmin}?text=${teksPesan}`, '_blank');
